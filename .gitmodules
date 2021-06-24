@@ -1,0 +1,3 @@
+[submodule "deps/SO_hostap"]
+	path = deps/SO_hostap
+	url = git@github.com:cablelabs/SO_hostap.git
