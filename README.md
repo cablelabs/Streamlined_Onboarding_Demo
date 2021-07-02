@@ -3,10 +3,10 @@ Resources and aggregated source for demo of Streamlined Onboarding (DPP integrat
 
 
 ## Permissions
-. Must make /var/run/hostapd/wifiX readable by pi
+*** Must make /var/run/hostapd/wifiX readable by pi ***
 
 
-== Running
+##  Running
 - Create virtual environement
 	- python -m venv .
 - hostap websocket listener
