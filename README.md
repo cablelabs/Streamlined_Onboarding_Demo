@@ -1,15 +1,16 @@
 # Streamlined_Onboarding_Demo
 Resources and aggregated source for demo of Streamlined Onboarding (DPP integrated with OCF).
-= SCTE Demo
-:sectnums:
-:toc:
 
 
-
-== Permissions
+## Permissions
 . Must make /var/run/hostapd/wifiX readable by pi
 
 
 == Running
-. create virtual environement
-..  python -m venv .
+- Create virtual environement
+	- python -m venv .
+- hostap websocket listener
+	- python demo.py
+- Flask Webpage
+	- cd app
+	- python webpage.py 
