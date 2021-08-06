@@ -1,16 +1,22 @@
 import qrcode
+import logging
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PIL.ImageQt import ImageQt
+from slined_onboarding import get_dpp_uri
+
+logger = logging.getLogger(__name__)
 
 try:
     import RPi.GPIO as GPIO
 except:
+    logger.warn('Failed to import RPi GPIO, falling back to mock GPIO')
     import Mock.GPIO as GPIO
 
 class Ui_MainWindow():
-    def __init__(self, MainWindow):
-        raw_uri = 'DPP:C:81/1;M:18d6c70f76c3;K:MDkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDIgADjLxqQvgt7zXDDHO9n9Vx3LSAEQifk0yavSna0syE214=;;'
-        self.qr_img = ImageQt(qrcode.make(raw_uri))
+    def __init__(self, MainWindow, iface_name):
+        self.iface_name = iface_name
+        self.qr_img = None
+        # self.qr_img = ImageQt(qrcode.make(raw_uri))
         self._setupUi(MainWindow)
 
     def _set_widgets(self):
@@ -47,12 +53,22 @@ class Ui_MainWindow():
         self.qr_code = QtWidgets.QLabel(self.qr_widget)
         self.qr_code.setGeometry(QtCore.QRect(5, 5, 210, 210))
         self.qr_code.setText("")
-        self.qr_code.setPixmap(QtGui.QPixmap.fromImage(self.qr_img))
+        # self.qr_code.setPixmap(QtGui.QPixmap.fromImage(self.qr_img))
         self.qr_code.setScaledContents(True)
         self.qr_code.setObjectName("qr_code")
         self.qr_code.hide()
 
     def _toggle_qr_code(self):
+        if self.qr_img is None:
+            try:
+                dpp_uri = get_dpp_uri(self.iface_name)
+                self.qr_img = ImageQt(qrcode.make(dpp_uri))
+            except:
+                logger.error('Failed to fetch/generate DPP URI')
+                return
+            self.qr_code.setPixmap(QtGui.QPixmap.fromImage(self.qr_img))
+
+
         if self.qr_code_shown:
             self.qr_code.hide()
         else:

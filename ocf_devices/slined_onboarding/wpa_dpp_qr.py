@@ -2,7 +2,7 @@ import subprocess
 import re
 import logging
 
-logger = logging.getLogger('slined_onboarding.wpa_dpp_qr')
+logger = logging.getLogger(__name__)
 
 def get_dpp_uri(iface_name):
     logger.info('Trying to fetch DPP URI for interface {}'.format(iface_name))
