@@ -4,12 +4,16 @@ from PyQt5 import QtWidgets
 
 logging.basicConfig(format='%(levelname)s [%(name)s]: %(message)s', level=logging.DEBUG)
 
-from slined_onboarding.gui import Ui_MainWindow
+from slined_onboarding import gui
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow(MainWindow, sys.argv[1])
-    # MainWindow.showFullScreen()
-    MainWindow.show()
+    # MainWindow = QtWidgets.QMainWindow()
+    window = gui.SoPiUi(sys.argv[1])
+    gpio_context = gui.SoGpioContext()
+    gpio_context.set_button(17, lambda x: window.toggle_qr_code())
+    gpio_context.set_button(27, lambda x: window.close())
+    window.show()
+    # window.showFullScreen()
+    app.aboutToQuit.connect(gpio_context.gpio_cleanup)
     sys.exit(app.exec_())
