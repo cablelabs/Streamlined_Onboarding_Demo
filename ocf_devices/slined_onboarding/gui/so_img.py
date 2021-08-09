@@ -4,7 +4,7 @@ from PyQt5 import QtWidgets, QtCore
 logger = logging.getLogger(__name__)
 
 class SoImgLabel(QtWidgets.QLabel):
-    def __init__(self, img):
+    def __init__(self, img=None):
         super().__init__()
         self.img = img
 

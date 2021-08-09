@@ -11,6 +11,7 @@ class SoPiUi(QtWidgets.QMainWindow):
     def __init__(self, iface_name):
         super().__init__()
         self.iface_name = iface_name
+        self.output_text = ''
         self._set_qr_code()
         self._setupUi()
 
@@ -23,7 +24,12 @@ class SoPiUi(QtWidgets.QMainWindow):
             self.img_label.set_img(None)
         else:
             self.img_label.set_img(QtGui.QPixmap.fromImage(self.qr_img))
+            self.append_output_text('Scan the QR code!')
         self.qr_code_shown = not self.qr_code_shown
+
+    def append_output_text(self, new_text):
+        self.output_text = self.output_text + new_text + '\n'
+        self.output_txt_label.setText(self.output_text)
 
     def _set_qr_code(self):
         self.qr_code_shown = False
@@ -39,7 +45,7 @@ class SoPiUi(QtWidgets.QMainWindow):
         self.resize(320, 240)
         self.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
         self._set_main_widget()
-        self._set_img_label()
+        self._set_labels()
         self._set_buttons()
         self.setCentralWidget(self.centralwidget)
 
@@ -52,11 +58,23 @@ class SoPiUi(QtWidgets.QMainWindow):
         self.centralwidget.setCursor(QtCore.Qt.BlankCursor)
         self.main_hz_layout = QtWidgets.QHBoxLayout(self.centralwidget)
 
-    def _set_img_label(self):
-        self.img_label = SoImgLabel(None)
+    def _set_labels(self):
+        self.label_layout = QtWidgets.QVBoxLayout()
+
+        self.img_label = SoImgLabel()
         self.img_label.setGeometry(QtCore.QRect(5, 5, 210, 210))
         self.img_label.setObjectName("img_label")
-        self.main_hz_layout.addWidget(self.img_label, 3)
+
+        self.output_txt_label = QtWidgets.QLabel()
+        self.output_txt_label.setStyleSheet('border: 1px solid gray')
+        self.output_txt_label.setWordWrap(True)
+        self.output_txt_label.setMaximumHeight(40)
+        self.output_txt_label.setText('Streamlined Onboarding OCF Pi Switch')
+
+        self.label_layout.addWidget(self.img_label, 4)
+        self.label_layout.addWidget(self.output_txt_label, 1)
+
+        self.main_hz_layout.addLayout(self.label_layout, 3)
 
     def _set_buttons(self):
         self.button_layout = QtWidgets.QVBoxLayout()
