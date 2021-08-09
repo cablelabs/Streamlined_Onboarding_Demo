@@ -23,7 +23,6 @@ class SoPiUi(QtWidgets.QMainWindow):
             self.img_label.set_img(None)
         else:
             self.img_label.set_img(QtGui.QPixmap.fromImage(self.qr_img))
-
         self.qr_code_shown = not self.qr_code_shown
 
     def _set_qr_code(self):
@@ -60,26 +59,28 @@ class SoPiUi(QtWidgets.QMainWindow):
         self.main_hz_layout.addWidget(self.img_label, 3)
 
     def _set_buttons(self):
-        self.verticalLayoutWidget = QtWidgets.QWidget()
-        self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
-        self.main_hz_layout.addWidget(self.verticalLayoutWidget, 1)
-        self.button_layout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
-        self.button_layout.setContentsMargins(0, 0, 0, 0)
+        self.button_layout = QtWidgets.QVBoxLayout()
         self.button_layout.setObjectName("button_layout")
-        self.qr_button = QtWidgets.QPushButton(self.verticalLayoutWidget)
+        self.qr_button = QtWidgets.QPushButton()
         self.qr_button.setObjectName("qr_button")
         self.button_layout.addWidget(self.qr_button)
-        self.reset_button = QtWidgets.QPushButton(self.verticalLayoutWidget)
+        self.reset_button = QtWidgets.QPushButton()
         self.reset_button.setObjectName("reset_button")
         self.button_layout.addWidget(self.reset_button)
-        self.toggle_button = QtWidgets.QPushButton(self.verticalLayoutWidget)
+        self.toggle_button = QtWidgets.QPushButton()
         self.toggle_button.setObjectName("toggle_button")
         self.button_layout.addWidget(self.toggle_button)
-        self.reboot_button = QtWidgets.QPushButton(self.verticalLayoutWidget)
+        self.reboot_button = QtWidgets.QPushButton()
         self.reboot_button.setObjectName("reboot_button")
         self.button_layout.addWidget(self.reboot_button)
+
         self.qr_button.clicked.connect(self.toggle_qr_code)
         self.reboot_button.clicked.connect(self.close)
+
+        self.toggle_button.setEnabled(False)
+        self.reset_button.setEnabled(False)
+
+        self.main_hz_layout.addLayout(self.button_layout, 1)
 
     def _retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
