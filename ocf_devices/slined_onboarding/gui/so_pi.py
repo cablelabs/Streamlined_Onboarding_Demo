@@ -18,12 +18,11 @@ class SoPiUi(QtWidgets.QMainWindow):
         if self.qr_img is None:
             logger.error('QR image not generated.')
             return
-        self.img_label.set_img(QtGui.QPixmap.fromImage(self.qr_img))
 
         if self.qr_code_shown:
-            self.img_label.hide()
+            self.img_label.set_img(None)
         else:
-            self.img_label.show()
+            self.img_label.set_img(QtGui.QPixmap.fromImage(self.qr_img))
 
         self.qr_code_shown = not self.qr_code_shown
 
@@ -40,31 +39,30 @@ class SoPiUi(QtWidgets.QMainWindow):
         self.setMinimumSize(QtCore.QSize(320, 240))
         self.resize(320, 240)
         self.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
-        self._set_widgets()
+        self._set_main_widget()
+        self._set_img_label()
         self._set_buttons()
         self.setCentralWidget(self.centralwidget)
 
         self._retranslateUi()
         QtCore.QMetaObject.connectSlotsByName(self)
 
-    def _set_widgets(self):
+    def _set_main_widget(self):
         self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setObjectName("centralwidget")
         self.centralwidget.setCursor(QtCore.Qt.BlankCursor)
         self.main_hz_layout = QtWidgets.QHBoxLayout(self.centralwidget)
-        self._set_img_label()
-        self.verticalLayoutWidget = QtWidgets.QWidget()
-        self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
-        self.main_hz_layout.addWidget(self.verticalLayoutWidget, 1)
 
     def _set_img_label(self):
         self.img_label = SoImgLabel(None)
         self.img_label.setGeometry(QtCore.QRect(5, 5, 210, 210))
         self.img_label.setObjectName("img_label")
         self.main_hz_layout.addWidget(self.img_label, 3)
-        self.img_label.hide()
 
     def _set_buttons(self):
+        self.verticalLayoutWidget = QtWidgets.QWidget()
+        self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
+        self.main_hz_layout.addWidget(self.verticalLayoutWidget, 1)
         self.button_layout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
         self.button_layout.setContentsMargins(0, 0, 0, 0)
         self.button_layout.setObjectName("button_layout")

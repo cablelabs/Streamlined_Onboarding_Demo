@@ -10,6 +10,8 @@ class SoImgLabel(QtWidgets.QLabel):
 
     def set_img(self, img):
         self.img = img
+        if img is None:
+            self.clear()
         self._scale_img()
 
     def resizeEvent(self, event):
