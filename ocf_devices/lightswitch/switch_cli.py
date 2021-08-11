@@ -25,11 +25,9 @@ def _process_selection(selection):
         quit_event.set()
 
 def _user_prompt():
-    switch.lock.acquire()
     _display_menu()
     selection = click.prompt('Choose an option', type=int)
     _process_selection(selection)
-    switch.lock.release()
 
 def run_cli():
     switch.start_main_loop()

@@ -14,12 +14,19 @@ class SoSwitch:
         self.lock = threading.Lock()
 
     def _configure_lib(self):
-        self.soswitch.so_switch_init.argtypes = [ctypes.c_char_p]
+        self._state_cb_type = ctypes.CFUNCTYPE(None)
+        self._state_cb = self._state_cb_type(self._update_state)
+        self.soswitch.so_switch_init.argtypes = [ctypes.c_char_p, self._state_cb_type]
+
+    def _update_state(self):
+        self.lock.acquire()
+        self.logger.debug('Update state called')
+        self.lock.release()
 
     def main_event_loop(self):
         self.lock.acquire()
         self.logger.debug('Invoking main IoTivity-Lite event loop')
-        self.soswitch.so_switch_init(b'./lightswitch_creds')
+        self.soswitch.so_switch_init(b'./lightswitch_creds', self._state_cb)
         self.lock.release()
         self.soswitch.so_switch_main_loop()
         self.logger.debug('Main event loop finished')
@@ -35,9 +42,13 @@ class SoSwitch:
         self.lock.release()
 
     def discover_light(self):
-        pass
+        self.lock.acquire()
+        self.soswitch.discover_light()
+        self.lock.release()
 
     def toggle_light(self):
+        self.lock.acquire()
         if not self.light_discovered:
             self.logger.error('Light not yet discovered')
             return
+        self.lock.release()

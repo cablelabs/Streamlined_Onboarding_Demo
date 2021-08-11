@@ -13,6 +13,14 @@ static pthread_mutex_t mutex;
 static pthread_cond_t cv;
 static struct timespec ts;
 
+void (*external_cb) (void);
+
+void
+set_external_cb(void (*new_cb)(void))
+{
+  external_cb = new_cb;
+}
+
 static int
 app_init(void)
 {
@@ -36,9 +44,9 @@ discovery_cb(const char *anchor, const char *uri, oc_string_array_t types,
     oc_resource_properties_t bm, void *user_data)
 {
   (void)anchor;
-  (void)user_data;
   (void)iface_mask;
   (void)bm;
+  (void)user_data;
   int i;
   int uri_len = strlen(uri);
   uri_len = (uri_len >= MAX_URI_LENGTH) ? MAX_URI_LENGTH - 1 : uri_len;
@@ -56,6 +64,7 @@ discovery_cb(const char *anchor, const char *uri, oc_string_array_t types,
         PRINT("\n");
         ep = ep->next;
       }
+      external_cb();
       return OC_STOP_DISCOVERY;
     }
   }
@@ -84,7 +93,7 @@ handle_signal(int signal)
 }
 
 int
-so_switch_init(char *storage_path)
+so_switch_init(char *storage_path, void (*cb)(void))
 {
   int init;
   struct sigaction sa;
@@ -102,6 +111,8 @@ so_switch_init(char *storage_path)
   init = oc_main_init(&handler);
   if (init < 0)
     return init;
+
+  set_external_cb(cb);
   return 0;
 }
 
