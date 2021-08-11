@@ -1,6 +1,5 @@
-import click
-import ctypes
 import logging
+import ctypes
 import threading
 
 class SoSwitch:
@@ -11,42 +10,29 @@ class SoSwitch:
         self.light_state = None
         self.light_discovered = False
 
-        self.event_thread = threading.Thread(target=self._main_event_loop)
-        self.event_thread_lock = threading.Lock()
-        self.quit_event = threading.Event()
+        self.event_thread = threading.Thread(target=self.main_event_loop)
+        self.lock = threading.Lock()
 
     def _configure_lib(self):
         self.soswitch.so_switch_init.argtypes = [ctypes.c_char_p]
 
-    def _main_event_loop(self):
-        self.event_thread_lock.acquire()
+    def main_event_loop(self):
+        self.lock.acquire()
         self.logger.debug('Invoking main IoTivity-Lite event loop')
         self.soswitch.so_switch_init(b'./lightswitch_creds')
-        self.event_thread_lock.release()
+        self.lock.release()
         self.soswitch.so_switch_main_loop()
-        self.logger.debug('Thread function exiting')
+        self.logger.debug('Main event loop finished')
 
-    def _display_menu(self):
-        menu_str = ('\n1: Discover Light\n'
-        '2: Toggle Light State\n'
-        '9: Exit\n')
-        print(menu_str)
+    def start_main_loop(self):
+        self.event_thread.start()
 
-    def _process_selection(self, selection):
-        if selection == 1:
-            self.discover_light()
-        if selection == 2:
-            self.toggle_light()
-        if selection == 9:
-            self.logger.debug('Exit called')
-            self.quit_event.set()
-
-    def _user_prompt(self):
-        self.event_thread_lock.acquire()
-        self._display_menu()
-        selection = click.prompt('Choose an option', type=int)
-        self._process_selection(selection)
-        self.event_thread_lock.release()
+    def stop_main_loop(self):
+        self.lock.acquire()
+        self.logger.debug('Signaling main event loop to exit')
+        self.soswitch.handle_signal(1)
+        self.event_thread.join()
+        self.lock.release()
 
     def discover_light(self):
         pass
@@ -55,10 +41,3 @@ class SoSwitch:
         if not self.light_discovered:
             self.logger.error('Light not yet discovered')
             return
-
-    def run_cli(self):
-        self.event_thread.start()
-        while not self.quit_event.is_set():
-            self._user_prompt()
-        self.soswitch.handle_signal(1)
-        self.event_thread.join()
