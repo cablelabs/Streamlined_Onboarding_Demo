@@ -9,7 +9,9 @@ from slined_onboarding import gui
 
 if __name__ == "__main__":
     logger = logging.getLogger(__name__)
+    logger.debug('Loading environment vars from .env')
     load_dotenv()
+    logger.debug('Starting the GUI')
     app = QtWidgets.QApplication(sys.argv)
     # MainWindow = QtWidgets.QMainWindow()
     window = gui.SoPiUi(sys.argv[1])

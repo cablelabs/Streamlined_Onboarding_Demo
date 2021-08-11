@@ -11,13 +11,14 @@ class SoPiUi(QtWidgets.QMainWindow):
     def __init__(self, iface_name):
         super().__init__()
         self.iface_name = iface_name
-        self.output_text = ''
+        self.output_text = list()
         self._set_qr_code()
         self._setupUi()
 
     def toggle_qr_code(self):
         if self.qr_img is None:
             logger.error('QR image not generated.')
+            self.append_output_text('No DPP QR code generated!')
             return
 
         if self.qr_code_shown:
@@ -28,10 +29,11 @@ class SoPiUi(QtWidgets.QMainWindow):
         self.qr_code_shown = not self.qr_code_shown
 
     def append_output_text(self, new_text):
-        self.output_text = self.output_text + new_text + '\n'
-        self.output_txt_label.setText(self.output_text)
+        self.output_text.append(new_text)
+        self.output_txt_label.setText('\n'.join(self.output_text))
 
     def _set_qr_code(self):
+        self.qr_img = None
         self.qr_code_shown = False
         try:
             dpp_uri = get_dpp_uri(self.iface_name)
