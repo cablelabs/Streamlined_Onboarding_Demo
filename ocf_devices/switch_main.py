@@ -1,5 +1,6 @@
 import logging
 import sys
+from dotenv import load_dotenv
 from PyQt5 import QtWidgets
 
 logging.basicConfig(format='%(levelname)s [%(name)s]: %(message)s', level=logging.DEBUG)
@@ -8,6 +9,7 @@ from slined_onboarding import gui
 
 if __name__ == "__main__":
     logger = logging.getLogger(__name__)
+    load_dotenv()
     app = QtWidgets.QApplication(sys.argv)
     # MainWindow = QtWidgets.QMainWindow()
     window = gui.SoPiUi(sys.argv[1])

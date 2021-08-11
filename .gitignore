@@ -1,3 +1,4 @@
 configs/
 !configs/README.md
 **/__pycache__/*
+ocf_devices/.env
