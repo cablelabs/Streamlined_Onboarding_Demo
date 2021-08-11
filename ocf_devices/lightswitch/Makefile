@@ -21,10 +21,18 @@ $(LITE_LIBS):
 clean-lite:
 	cd $(LITE_DIR)/port/linux && make cleanall
 
+soswitch.o: soswitch.c
+	@$(CC) -c -o $@ $^ -DOC_CLIENT $(CFLAGS) $(LITE_INCLUDES) $(LIBS)
+	@echo $(CC) $@
+
+libsoswitch.so: soswitch.o $(CLIENT_LIB)
+	@$(CC) -shared -o $@ $^ -DOC_CLIENT $(CFLAGS) $(LITE_INCLUDES) $(LIBS)
+	@echo $(CC) $@
+
 lightswitch: lightswitch.c $(CLIENT_LIB)
 	@mkdir -p $@_creds
-	@$(CC) -o $@ $< $(CLIENT_LIB) -DOC_CLIENT $(CFLAGS) $(LITE_INCLUDES) $(LIBS)
-	@echo $(CC) lightswitch
+	@$(CC) -o $@ $^ $(CLIENT_LIB) -DOC_CLIENT $(CFLAGS) $(LITE_INCLUDES) $(LIBS)
+	@echo $(CC) $@
 
 clean:
-	rm -rf lightswitch lightswitch_creds
+	rm -rf lightswitch lightswitch_creds libsoswitch.so soswitch.o
