@@ -16,4 +16,4 @@ class SoGpioContext:
 
     def set_button(self, pin, button_callback):
         self.logger.debug('Setting up button callback on pin {}'.format(pin))
-        self.button_map.setdefault(pin, Button(pin, bounce_time=300)).when_pressed = button_callback
+        self.button_map.setdefault(pin, Button(pin, bounce_time=0.03)).when_pressed = button_callback
