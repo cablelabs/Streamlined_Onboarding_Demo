@@ -4,6 +4,10 @@
 #include <pthread.h>
 #include <signal.h>
 
+#define MAX_URI_LENGTH (30)
+static char a_light[MAX_URI_LENGTH];
+static oc_endpoint_t *light_server;
+
 static int quit = 0;
 static pthread_mutex_t mutex;
 static pthread_cond_t cv;
@@ -26,11 +30,48 @@ signal_event_loop(void)
   pthread_mutex_unlock(&mutex);
 }
 
+static oc_discovery_flags_t
+discovery_cb(const char *anchor, const char *uri, oc_string_array_t types,
+    oc_interface_mask_t iface_mask, oc_endpoint_t *endpoint,
+    oc_resource_properties_t bm, void *user_data)
+{
+  (void)anchor;
+  (void)user_data;
+  (void)iface_mask;
+  (void)bm;
+  int i;
+  int uri_len = strlen(uri);
+  uri_len = (uri_len >= MAX_URI_LENGTH) ? MAX_URI_LENGTH - 1 : uri_len;
+  for (i = 0; i < (int)oc_string_array_get_allocated_size(types); i++) {
+    char *t = oc_string_array_get_item(types, i);
+    if (strlen(t) == 10 && strncmp(t, "core.light", 10) == 0) {
+      oc_endpoint_list_copy(&light_server, endpoint);
+      strncpy(a_light, uri, uri_len);
+      a_light[uri_len] = '\0';
+
+      PRINT("Resource %s hosted at endpoints:\n", a_light);
+      oc_endpoint_t *ep = endpoint;
+      while (ep != NULL) {
+        PRINTipaddr(*ep);
+        PRINT("\n");
+        ep = ep->next;
+      }
+      return OC_STOP_DISCOVERY;
+    }
+  }
+  return OC_CONTINUE_DISCOVERY;
+}
+
+void
+discover_light(void)
+{
+  oc_do_ip_discovery("core.light", &discovery_cb, NULL);
+}
+
 static void
 issue_requests(void)
 {
-  printf("TODO: Discovery request happens here\n");
-  // oc_do_ip_discovery("core.light", &discovery, NULL);
+  discover_light();
 }
 
 void
