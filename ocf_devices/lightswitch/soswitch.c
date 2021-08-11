@@ -33,7 +33,7 @@ issue_requests(void)
   // oc_do_ip_discovery("core.light", &discovery, NULL);
 }
 
-static void
+void
 handle_signal(int signal)
 {
   (void)signal;
