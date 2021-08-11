@@ -1,30 +1,19 @@
 import logging
 
-logger = logging.getLogger(__name__)
-
-try:
-    import RPi.GPIO as GPIO
-except:
-    logger.warn('Failed to import RPi GPIO, falling back to mock GPIO')
-    import Mock.GPIO as GPIO
+from gpiozero import Button, PWMLED
 
 class SoGpioContext:
     def __init__(self):
+        self.logger = logging.getLogger(__name__)
         self._gpio_setup()
+        self.button_map = dict()
 
     def _gpio_setup(self):
-        GPIO.setmode(GPIO.BCM)
-
         # Backlight PWM
-        GPIO.setup(18, GPIO.OUT)
+        self.backlight = PWMLED(18)
         self.backlightOn = True
-        self.backlight = GPIO.PWM(18, 1000)
-        self.backlight.start(100)
+        self.backlight.value = 1
 
     def set_button(self, pin, button_callback):
-        GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.add_event_detect(pin, GPIO.RISING, button_callback, 300)
-
-    def gpio_cleanup(self):
-        logger.info('Cleaning up GPIO context')
-        GPIO.cleanup()
+        self.logger.debug('Setting up button callback on pin {}'.format(pin))
+        self.button_map.setdefault(pin, Button(pin, bounce_time=300)).when_pressed = button_callback

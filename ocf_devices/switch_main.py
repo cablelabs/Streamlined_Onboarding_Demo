@@ -7,6 +7,7 @@ logging.basicConfig(format='%(levelname)s [%(name)s]: %(message)s', level=loggin
 from slined_onboarding import gui
 
 if __name__ == "__main__":
+    logger = logging.getLogger(__name__)
     app = QtWidgets.QApplication(sys.argv)
     # MainWindow = QtWidgets.QMainWindow()
     window = gui.SoPiUi(sys.argv[1])
@@ -15,5 +16,4 @@ if __name__ == "__main__":
     gpio_context.set_button(27, lambda x: window.close())
     window.show()
     # window.showFullScreen()
-    app.aboutToQuit.connect(gpio_context.gpio_cleanup)
     sys.exit(app.exec_())
