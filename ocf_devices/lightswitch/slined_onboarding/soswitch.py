@@ -19,8 +19,8 @@ class SoSwitch:
         self.soswitch.so_switch_init.argtypes = [ctypes.c_char_p]
 
     def _main_event_loop(self):
-        self.logger.debug('Invoking main IoTivity-Lite event loop')
         self.event_thread_lock.acquire()
+        self.logger.debug('Invoking main IoTivity-Lite event loop')
         self.soswitch.so_switch_init(b'./lightswitch_creds')
         self.event_thread_lock.release()
         self.soswitch.so_switch_main_loop()
@@ -33,6 +33,10 @@ class SoSwitch:
         print(menu_str)
 
     def _process_selection(self, selection):
+        if selection == 1:
+            self.discover_light()
+        if selection == 2:
+            self.toggle_light()
         if selection == 9:
             self.logger.debug('Exit called')
             self.quit_event.set()
@@ -44,13 +48,17 @@ class SoSwitch:
         self._process_selection(selection)
         self.event_thread_lock.release()
 
-    def start_main_event_loop(self):
+    def discover_light(self):
+        pass
+
+    def toggle_light(self):
+        if not self.light_discovered:
+            self.logger.error('Light not yet discovered')
+            return
+
+    def run_cli(self):
         self.event_thread.start()
-
-    def stop_main_event_loop(self):
-        self.soswitch.handle_signal(1)
-        self.event_thread.join()
-
-    def run(self):
         while not self.quit_event.is_set():
             self._user_prompt()
+        self.soswitch.handle_signal(1)
+        self.event_thread.join()
