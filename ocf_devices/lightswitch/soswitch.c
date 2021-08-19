@@ -4,19 +4,26 @@
 #include <pthread.h>
 #include <signal.h>
 
+typedef struct {
+  bool state;
+  bool discovered;
+} switch_state;
+
 #define MAX_URI_LENGTH (30)
 static char a_light[MAX_URI_LENGTH];
 static oc_endpoint_t *light_server;
+
+static switch_state my_state = { .state = false, .discovered = false };
 
 static int quit = 0;
 static pthread_mutex_t mutex;
 static pthread_cond_t cv;
 static struct timespec ts;
 
-void (*external_cb) (void);
+void (*external_cb) (switch_state *state);
 
 void
-set_external_cb(void (*new_cb)(void))
+set_external_cb(void (*new_cb)(switch_state *state))
 {
   external_cb = new_cb;
 }
@@ -64,7 +71,7 @@ discovery_cb(const char *anchor, const char *uri, oc_string_array_t types,
         PRINT("\n");
         ep = ep->next;
       }
-      external_cb();
+      external_cb(&my_state);
       return OC_STOP_DISCOVERY;
     }
   }
@@ -93,7 +100,7 @@ handle_signal(int signal)
 }
 
 int
-so_switch_init(char *storage_path, void (*cb)(void))
+so_switch_init(char *storage_path, void (*cb)(switch_state *state))
 {
   int init;
   struct sigaction sa;

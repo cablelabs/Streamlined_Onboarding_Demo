@@ -2,25 +2,31 @@ import logging
 import ctypes
 import threading
 
+class SWITCHSTATE(ctypes.Structure):
+    _fields_ = [('state', ctypes.c_bool), ('discovered', ctypes.c_bool)]
+
 class SoSwitch:
     def __init__(self, soswitch_lib_path):
         self.logger = logging.getLogger(__name__)
         self.soswitch = ctypes.CDLL(soswitch_lib_path)
         self._configure_lib()
-        self.light_state = None
+        self.light_state = False
         self.light_discovered = False
 
         self.event_thread = threading.Thread(target=self.main_event_loop)
         self.lock = threading.Lock()
 
     def _configure_lib(self):
-        self._state_cb_type = ctypes.CFUNCTYPE(None)
+        self._state_cb_type = ctypes.CFUNCTYPE(None, ctypes.POINTER(SWITCHSTATE))
         self._state_cb = self._state_cb_type(self._update_state)
         self.soswitch.so_switch_init.argtypes = [ctypes.c_char_p, self._state_cb_type]
 
-    def _update_state(self):
+    def _update_state(self, switch_state):
         self.lock.acquire()
         self.logger.debug('Update state called')
+        self.logger.debug('Switch State is {}'.format(switch_state.contents))
+        self.logger.debug('Discovered: {}'.format(switch_state.contents.discovered))
+        self.logger.debug('State: {}'.format(switch_state.contents.state))
         self.lock.release()
 
     def main_event_loop(self):
@@ -50,5 +56,4 @@ class SoSwitch:
         self.lock.acquire()
         if not self.light_discovered:
             self.logger.error('Light not yet discovered')
-            return
-        self.lock.release()
+            self.lock.release()
