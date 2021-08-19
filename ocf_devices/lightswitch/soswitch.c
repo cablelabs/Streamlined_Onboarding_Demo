@@ -71,6 +71,7 @@ discovery_cb(const char *anchor, const char *uri, oc_string_array_t types,
         PRINT("\n");
         ep = ep->next;
       }
+      my_state.discovered = true;
       external_cb(&my_state);
       return OC_STOP_DISCOVERY;
     }

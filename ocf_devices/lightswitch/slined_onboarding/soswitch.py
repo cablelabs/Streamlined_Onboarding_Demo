@@ -27,6 +27,9 @@ class SoSwitch:
         self.logger.debug('Switch State is {}'.format(switch_state.contents))
         self.logger.debug('Discovered: {}'.format(switch_state.contents.discovered))
         self.logger.debug('State: {}'.format(switch_state.contents.state))
+
+        self.light_state = switch_state.contents.state
+        self.light_discovered = switch_state.contents.discovered
         self.lock.release()
 
     def main_event_loop(self):
@@ -56,4 +59,4 @@ class SoSwitch:
         self.lock.acquire()
         if not self.light_discovered:
             self.logger.error('Light not yet discovered')
-            self.lock.release()
+        self.lock.release()
