@@ -1,13 +1,10 @@
+import os
+import sys
 import logging
 import click
 import threading
+from dotenv import load_dotenv
 from slined_onboarding import SoSwitch
-
-logging.basicConfig(format='%(levelname)s [%(name)s]: %(message)s', level=logging.DEBUG)
-logger = logging.getLogger(__name__)
-
-switch = SoSwitch('./libsoswitch.so')
-quit_event = threading.Event()
 
 def _display_menu():
     menu_str = ('\n1: Discover Light\n'
@@ -36,4 +33,12 @@ def run_cli():
     switch.stop_main_loop()
 
 if __name__ == '__main__':
+    logging.basicConfig(format='%(levelname)s [%(name)s]: %(message)s', level=logging.DEBUG)
+    logger = logging.getLogger(__name__)
+    load_dotenv()
+    if os.environ.get('SO_CONFIG_PATH') is None:
+        logger.error('SO_CONFIG_PATH variable not set!')
+        sys.exit(-1)
+    switch = SoSwitch('./libsoswitch.so', os.environ.get('SO_CONFIG_PATH'))
+    quit_event = threading.Event()
     run_cli()

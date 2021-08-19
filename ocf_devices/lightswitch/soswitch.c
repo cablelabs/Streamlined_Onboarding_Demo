@@ -1,5 +1,6 @@
 #include "oc_api.h"
 #include "port/oc_clock.h"
+#include "ocf_dpp.h"
 #include <stdio.h>
 #include <pthread.h>
 #include <signal.h>
@@ -101,7 +102,7 @@ handle_signal(int signal)
 }
 
 int
-so_switch_init(char *storage_path, void (*cb)(switch_state *state))
+so_switch_init(char *storage_path, char *so_config_path, void (*cb)(switch_state *state))
 {
   int init;
   struct sigaction sa;
@@ -121,6 +122,13 @@ so_switch_init(char *storage_path, void (*cb)(switch_state *state))
     return init;
 
   set_external_cb(cb);
+
+  if (oc_so_info_init() == 0) {
+    OC_DBG("Generated streamlined onboarding info");
+    if (dpp_so_init(so_config_path) < 0 || dpp_send_so_info() < 0) {
+      OC_ERR("Failed to provide streamlined onboarding information to wpa_supplicant");
+    }
+  }
   return 0;
 }
 
