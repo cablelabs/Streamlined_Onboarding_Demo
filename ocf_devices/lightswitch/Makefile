@@ -11,6 +11,7 @@ LITE_LIBS=$(CLIENT_LIB) $(SERVER_LIB)
 LITE_INCLUDES=-I$(LITE_DIR) $(addprefix -I$(LITE_DIR)/, include port/linux apps/streamlined_onboarding/include)
 CFLAGS=-fPIC -fno-asynchronous-unwind-tables -fno-omit-frame-pointer -ffreestanding -Os -fno-stack-protector -ffunction-sections -fdata-sections -fno-reorder-functions -fno-defer-pop -fno-strict-overflow -std=gnu99 -Wall -Wextra -Werror -pedantic
 LIBS=-lm -pthread -lrt -lwpa_client
+SO_DPP=1
 
 all: lightswitch
 
