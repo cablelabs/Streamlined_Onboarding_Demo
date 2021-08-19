@@ -1,0 +1,12 @@
+[Unit]
+Description=Streamlined onboarding's modified WPA supplicant
+Before=network.target
+After=dbus.service
+Wants=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/streamlined_onboarding/wpa_supplicant -c/usr/local/etc/streamlined_onboarding/so_wpa_supplicant.conf -iwlx18d6c70f76c3 -d
+
+[Install]
+WantedBy=multi-user.target
