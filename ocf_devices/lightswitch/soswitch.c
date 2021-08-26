@@ -42,6 +42,36 @@ signal_event_loop(void)
   pthread_mutex_unlock(&mutex);
 }
 
+static void
+post_light_response_cb(oc_client_response_t *data)
+{
+  if (data->code > OC_STATUS_CHANGED) {
+    OC_ERR("POST returned unexpected response code %d\n", data->code);
+  }
+  else {
+    my_state.state = !my_state.state;
+  }
+  external_cb(&my_state);
+}
+
+void
+toggle_light(void)
+{
+  if (!my_state.discovered) {
+    return;
+  }
+  if (oc_init_post(a_light, light_server, NULL, &post_light_response_cb, LOW_QOS, NULL)) {
+    oc_rep_start_root_object();
+    oc_rep_set_boolean(root, state, !my_state.state);
+    oc_rep_end_root_object();
+    if (oc_do_post())
+      PRINT("Sent POST request\n");
+    else
+      PRINT("Could not send POST request\n");
+  } else
+    PRINT("Could not init POST request\n");
+}
+
 static oc_discovery_flags_t
 discovery_cb(const char *anchor, const char *uri, oc_string_array_t types,
     oc_interface_mask_t iface_mask, oc_endpoint_t *endpoint,
@@ -80,11 +110,6 @@ void
 discover_light(void)
 {
   oc_do_ip_discovery("core.light", &discovery_cb, NULL);
-}
-
-void
-toggle_light(void)
-{
 }
 
 static void

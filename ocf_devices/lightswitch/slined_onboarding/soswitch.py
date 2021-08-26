@@ -60,6 +60,9 @@ class SoSwitch:
 
     def toggle_light(self):
         self.lock.acquire()
+        self.logger.debug('Lock acquired, attempting to toggle light resource.')
         if not self.light_discovered:
             self.logger.error('Light not yet discovered')
+        self.soswitch.toggle_light()
+        self.logger.debug('Done calling toggle_light')
         self.lock.release()
