@@ -1,14 +1,10 @@
 #include "oc_api.h"
 #include "port/oc_clock.h"
 #include "ocf_dpp.h"
+#include "soswitch.h"
 #include <stdio.h>
 #include <pthread.h>
 #include <signal.h>
-
-typedef struct {
-  bool state;
-  bool discovered;
-} switch_state;
 
 #define MAX_URI_LENGTH (30)
 static char a_light[MAX_URI_LENGTH];
@@ -21,10 +17,10 @@ static pthread_mutex_t mutex;
 static pthread_cond_t cv;
 static struct timespec ts;
 
-void (*external_cb) (switch_state *state);
+external_cb_t external_cb = NULL;
 
 void
-set_external_cb(void (*new_cb)(switch_state *state))
+set_external_cb(external_cb_t new_cb)
 {
   external_cb = new_cb;
 }
@@ -84,6 +80,11 @@ void
 discover_light(void)
 {
   oc_do_ip_discovery("core.light", &discovery_cb, NULL);
+}
+
+void
+toggle_light(void)
+{
 }
 
 static void
