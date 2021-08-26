@@ -3,5 +3,6 @@ configs/
 **/__pycache__/*
 ocf_devices/lightswitch/.env
 ocf_devices/lightswitch/lightswitch
+ocf_devices/lightswitch/lightswitch_creds
 ocf_devices/**/*.so
 ocf_devices/**/*.o
