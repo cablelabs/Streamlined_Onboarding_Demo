@@ -6,7 +6,7 @@ class SWITCHSTATE(ctypes.Structure):
     _fields_ = [('state', ctypes.c_bool), ('discovered', ctypes.c_bool)]
 
 class SoSwitch:
-    def __init__(self, soswitch_lib_path, so_config_path):
+    def __init__(self, soswitch_lib_path, so_config_path, state_update_cb=None):
         self.logger = logging.getLogger(__name__)
         self.soswitch = ctypes.CDLL(soswitch_lib_path)
         self._configure_lib()
@@ -18,6 +18,7 @@ class SoSwitch:
         self.lock = threading.Lock()
 
         self._so_config_path = so_config_path
+        self._state_update_cb = state_update_cb
 
     def _configure_lib(self):
         self._state_cb_type = ctypes.CFUNCTYPE(None, ctypes.POINTER(SWITCHSTATE))
@@ -33,6 +34,8 @@ class SoSwitch:
 
         self.light_state = switch_state.contents.state
         self.light_discovered = switch_state.contents.discovered
+        if self._state_update_cb is not None:
+            self._state_update_cb(self.light_discovered, self.light_state)
         self.lock.release()
 
     def main_event_loop(self):
