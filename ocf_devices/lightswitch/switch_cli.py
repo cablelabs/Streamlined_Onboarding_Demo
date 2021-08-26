@@ -10,6 +10,8 @@ def _display_menu():
     menu_str = ('\n1: Discover Light\n'
     '2: Toggle Light State\n'
     '9: Exit\n')
+    state_str = '\nLight discovered: {}\nLight state: {}\n'.format(switch.light_discovered, 'N/A' if not switch.light_discovered else switch.light_state)
+    print('\n\nCurrent light state:{}'.format(state_str))
     print(menu_str)
 
 def _process_selection(selection):

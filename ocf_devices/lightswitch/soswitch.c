@@ -64,12 +64,15 @@ toggle_light(void)
     oc_rep_start_root_object();
     oc_rep_set_boolean(root, state, !my_state.state);
     oc_rep_end_root_object();
-    if (oc_do_post())
-      PRINT("Sent POST request\n");
-    else
-      PRINT("Could not send POST request\n");
-  } else
-    PRINT("Could not init POST request\n");
+    if (oc_do_post()) {
+      OC_DBG("Sent POST request\n");
+    }
+    else {
+      OC_ERR("Could not send POST request\n");
+    }
+  } else {
+    OC_ERR("Could not init POST request\n");
+  }
 }
 
 static void
@@ -79,7 +82,6 @@ get_light(oc_client_response_t *data)
   while (rep != NULL) {
     switch (rep->type) {
     case OC_REP_BOOL:
-      PRINT("%d\n", rep->value.boolean);
       my_state.state = rep->value.boolean;
       break;
     default:
@@ -110,13 +112,7 @@ discovery_cb(const char *anchor, const char *uri, oc_string_array_t types,
       strncpy(a_light, uri, uri_len);
       a_light[uri_len] = '\0';
 
-      PRINT("Resource %s hosted at endpoints:\n", a_light);
-      oc_endpoint_t *ep = endpoint;
-      while (ep != NULL) {
-        PRINTipaddr(*ep);
-        PRINT("\n");
-        ep = ep->next;
-      }
+      OC_DBG("Resource %s hosted at endpoints:\n", a_light);
       my_state.discovered = true;
       oc_do_get(a_light, light_server, NULL, &get_light, LOW_QOS, NULL);
       return OC_STOP_DISCOVERY;
@@ -141,7 +137,7 @@ void
 handle_signal(int signal)
 {
   (void)signal;
-  printf("handle signal called\n");
+  OC_DBG("handle signal called\n");
   signal_event_loop();
   quit = 1;
 }
@@ -160,7 +156,7 @@ so_switch_init(char *storage_path, char *so_config_path, void (*cb)(switch_state
     .signal_event_loop = signal_event_loop,
     .requests_entry = issue_requests };
 
-  printf("Calling storage config with path %s\n", storage_path);
+  OC_DBG("Calling storage config with path %s\n", storage_path);
   oc_storage_config(storage_path);
   init = oc_main_init(&handler);
   if (init < 0)
