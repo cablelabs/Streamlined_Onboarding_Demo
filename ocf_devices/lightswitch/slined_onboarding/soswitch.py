@@ -3,7 +3,8 @@ import ctypes
 import threading
 
 class SWITCHSTATE(ctypes.Structure):
-    _fields_ = [('state', ctypes.c_bool), ('discovered', ctypes.c_bool)]
+    _fields_ = [('state', ctypes.c_bool), ('discovered', ctypes.c_bool),
+            ('error_state', ctypes.c_bool), ('error_message', ctypes.c_char_p)]
 
 class SoSwitch:
     def __init__(self, soswitch_lib_path, so_config_path, state_update_cb=None):
@@ -35,7 +36,7 @@ class SoSwitch:
         self.light_state = switch_state.contents.state
         self.light_discovered = switch_state.contents.discovered
         if self._state_update_cb is not None:
-            self._state_update_cb(self.light_discovered, self.light_state)
+            self._state_update_cb(self.light_discovered, self.light_state, switch_state.contents.error_state, switch_state.contents.error_message)
         self.lock.release()
 
     def main_event_loop(self):

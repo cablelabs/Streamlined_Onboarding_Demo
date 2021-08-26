@@ -12,11 +12,13 @@ def _display_menu():
     '9: Exit\n')
     print(menu_str)
 
-def state_update_print(discovered, state):
+def state_update_print(discovered, state, error_state, error_message):
     cli_cv.acquire()
-    cli_cv.notify()
+    if error_state is True:
+        print('IoTivity-Lite Error: {}'.format(error_message.decode('ascii')))
     state_str = '\nLight discovered: {}\nLight state: {}'.format(discovered, 'N/A' if not discovered else state)
     print('\nCurrent light state:{}'.format(state_str))
+    cli_cv.notify()
     cli_cv.release()
 
 def _process_selection(selection):
@@ -31,7 +33,7 @@ def _process_selection(selection):
 def _user_prompt():
     cli_cv.acquire()
     if not cli_cv.wait(timeout=1.0):
-        logger.error('Failed')
+        logger.debug('Wait for state update timed out')
     _display_menu()
     selection = click.prompt('Choose an option', type=int)
     _process_selection(selection)

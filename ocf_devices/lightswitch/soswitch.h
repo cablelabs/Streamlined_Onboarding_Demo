@@ -1,6 +1,8 @@
 typedef struct {
   bool state;
   bool discovered;
+  bool error_state;
+  char *error_message;
 } switch_state;
 
 typedef void (*external_cb_t)(switch_state *);
