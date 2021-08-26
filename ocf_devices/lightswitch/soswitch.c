@@ -72,6 +72,25 @@ toggle_light(void)
     PRINT("Could not init POST request\n");
 }
 
+static void
+get_light(oc_client_response_t *data)
+{
+  oc_rep_t *rep = data->payload;
+  while (rep != NULL) {
+    switch (rep->type) {
+    case OC_REP_BOOL:
+      PRINT("%d\n", rep->value.boolean);
+      my_state.state = rep->value.boolean;
+      break;
+    default:
+      break;
+    }
+    rep = rep->next;
+  }
+  external_cb(&my_state);
+}
+
+
 static oc_discovery_flags_t
 discovery_cb(const char *anchor, const char *uri, oc_string_array_t types,
     oc_interface_mask_t iface_mask, oc_endpoint_t *endpoint,
@@ -99,7 +118,7 @@ discovery_cb(const char *anchor, const char *uri, oc_string_array_t types,
         ep = ep->next;
       }
       my_state.discovered = true;
-      external_cb(&my_state);
+      oc_do_get(a_light, light_server, NULL, &get_light, LOW_QOS, NULL);
       return OC_STOP_DISCOVERY;
     }
   }
