@@ -28,8 +28,6 @@ class SoSwitch:
 
     def _update_state(self, switch_state):
         self.lock.acquire()
-        self.logger.debug('Update state called')
-        self.logger.debug('Switch State is {}'.format(switch_state.contents))
         self.logger.debug('Discovered: {}'.format(switch_state.contents.discovered))
         self.logger.debug('State: {}'.format(switch_state.contents.state))
 
@@ -67,6 +65,7 @@ class SoSwitch:
         self.logger.debug('Lock acquired, attempting to toggle light resource.')
         if not self.light_discovered:
             self.logger.error('Light not yet discovered')
-        self.soswitch.toggle_light()
-        self.logger.debug('Done calling toggle_light')
+        else:
+            self.soswitch.toggle_light()
+            self.logger.debug('Done calling toggle_light')
         self.lock.release()

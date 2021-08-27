@@ -10,7 +10,8 @@
 static char a_light[MAX_URI_LENGTH];
 static oc_endpoint_t *light_server;
 
-static switch_state my_state = { .state = false, .discovered = false };
+static switch_state my_state = { .state = false, .discovered = false,
+  .error_state = false, .error_message = NULL};
 
 static int quit = 0;
 static pthread_mutex_t mutex;
@@ -47,11 +48,14 @@ post_light_response_cb(oc_client_response_t *data)
 {
   if (data->code > OC_STATUS_CHANGED) {
     OC_ERR("POST returned unexpected response code %d\n", data->code);
+    my_state.error_state = true;
+    my_state.error_message = "POST to light returned unexpected response";
   }
   else {
     my_state.state = !my_state.state;
   }
   external_cb(&my_state);
+  my_state.error_state = false;
 }
 
 void
@@ -78,6 +82,10 @@ toggle_light(void)
 static void
 get_light(oc_client_response_t *data)
 {
+  if (data->code != OC_STATUS_OK) {
+    my_state.error_state = true;
+    my_state.error_message = "GET failed with unexpected response";
+  }
   oc_rep_t *rep = data->payload;
   while (rep != NULL) {
     switch (rep->type) {
@@ -90,6 +98,7 @@ get_light(oc_client_response_t *data)
     rep = rep->next;
   }
   external_cb(&my_state);
+  my_state.error_state = false;
 }
 
 
