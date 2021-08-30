@@ -1,5 +1,4 @@
-configs/
-!configs/README.md
+configs/runtime
 **/__pycache__/*
 ocf_devices/lightswitch/.env
 ocf_devices/lightswitch/lightswitch
