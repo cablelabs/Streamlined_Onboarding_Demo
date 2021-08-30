@@ -14,6 +14,8 @@ class SoPiUi(QtWidgets.QMainWindow):
         self.output_text = list()
         self._set_qr_code()
         self._setupUi()
+        self._off_img = QtGui.QPixmap('./off.png')
+        self._on_img = QtGui.QPixmap('./on.png')
 
         self.event_worker = SwitchWorker()
         self.event_thread = QtCore.QThread()
@@ -29,7 +31,7 @@ class SoPiUi(QtWidgets.QMainWindow):
             return
 
         if self.qr_code_shown:
-            self.img_label.set_img(None)
+            self.img_label.set_img(self._on_img if self.event_worker.switch.light_state else self._off_img)
         else:
             self.img_label.set_img(QtGui.QPixmap.fromImage(self.qr_img))
             self.append_output_text('Scan the QR code!')
@@ -39,8 +41,6 @@ class SoPiUi(QtWidgets.QMainWindow):
         self.logger.debug('Toggle button pressed')
         if self.qr_code_shown:
             self.toggle_qr_code()
-
-        # TODO Change image
 
         if not self.event_worker.switch.light_discovered:
             self.logger.error('Light not discovered!')
@@ -154,5 +154,7 @@ class SoPiUi(QtWidgets.QMainWindow):
             self.logger.error('Error flag set')
             error_text = '<font color="red">{}</font>\n'.format(error_message.decode('ascii'))
             self.append_output_text(error_text)
-        if discovered:
-            self.toggle_button.setEnabled(True)
+        if not discovered:
+            return
+        self.toggle_button.setEnabled(True)
+        self.img_label.set_img(self._on_img if state else self._off_img)
