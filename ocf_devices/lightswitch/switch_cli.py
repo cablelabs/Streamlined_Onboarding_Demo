@@ -40,10 +40,10 @@ def _user_prompt():
     cli_cv.release()
 
 def run_cli():
-    switch.start_main_loop()
     while not quit_event.is_set():
         _user_prompt()
     switch.stop_main_loop()
+    event_thread.join()
 
 if __name__ == '__main__':
     # logging.basicConfig(format='%(levelname)s [%(name)s]: %(message)s', level=logging.DEBUG)
@@ -56,4 +56,6 @@ if __name__ == '__main__':
         sys.exit(-1)
     switch = SoSwitch('./libsoswitch.so', os.environ.get('SO_CONFIG_PATH'), state_update_print)
     quit_event = threading.Event()
+    event_thread = threading.Thread(target=switch.main_event_loop)
+    event_thread.start()
     run_cli()
