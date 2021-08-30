@@ -1,0 +1,12 @@
+[Unit]
+Description=Streamlined onboarding's modified hostapd
+Before=dnsmasq.service
+After=network.target
+
+[Service]
+Type=simple
+Environment=DAEMON_CONF=/usr/local/etc/streamlined_onboarding/so_hostapd.conf
+ExecStart=/usr/local/bin/streamlined_onboarding/hostapd $DAEMON_OPTS ${DAEMON_CONF}
+
+[Install]
+WantedBy=multi-user.target
