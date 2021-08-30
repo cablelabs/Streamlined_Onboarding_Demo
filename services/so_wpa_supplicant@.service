@@ -1,0 +1,14 @@
+[Unit]
+Description=Streamlined onboarding's modified WPA supplicant
+Requires=sys-subsystem-net-devices-%i.device
+After=sys-subsystem-net-devices-%i.device
+Before=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+Environment=DAEMON_CONF=/usr/local/etc/streamlined_onboarding/so_wpa_supplicant.conf
+ExecStart=/usr/local/bin/streamlined_onboarding/wpa_supplicant -c${DAEMON_CONF} -i%i -d
+
+[Install]
+Alias=multi-user.target.wants/so_wpa_supplicant@%i.service
