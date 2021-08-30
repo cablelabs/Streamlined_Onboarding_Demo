@@ -147,8 +147,8 @@ handle_signal(int signal)
 {
   (void)signal;
   OC_DBG("handle signal called\n");
-  signal_event_loop();
   quit = 1;
+  signal_event_loop();
 }
 
 int

@@ -4,20 +4,27 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PIL.ImageQt import ImageQt
 from slined_onboarding import get_dpp_uri
 from .so_img import SoImgLabel
-
-logger = logging.getLogger(__name__)
+from .switch_worker import SwitchWorker
 
 class SoPiUi(QtWidgets.QMainWindow):
     def __init__(self, iface_name):
         super().__init__()
+        self.logger = logging.getLogger(__name__)
         self.iface_name = iface_name
         self.output_text = list()
         self._set_qr_code()
         self._setupUi()
 
+        self.event_worker = SwitchWorker()
+        self.event_thread = QtCore.QThread()
+        self.event_worker.moveToThread(self.event_thread)
+        self.event_thread.started.connect(self.event_worker.run)
+
+        self.event_worker.device_state.connect(self._state_update)
+
     def toggle_qr_code(self):
         if self.qr_img is None:
-            logger.error('QR image not generated.')
+            self.logger.error('QR image not generated.')
             self.append_output_text('No DPP QR code generated!')
             return
 
@@ -28,9 +35,37 @@ class SoPiUi(QtWidgets.QMainWindow):
             self.append_output_text('Scan the QR code!')
         self.qr_code_shown = not self.qr_code_shown
 
+    def toggle_switch(self):
+        self.logger.debug('Toggle button pressed')
+        if self.qr_code_shown:
+            self.toggle_qr_code()
+
+        # TODO Change image
+
+        if not self.event_worker.switch.light_discovered:
+            self.logger.error('Light not discovered!')
+            self.append_output_text('Light not discovered')
+        else:
+            self.logger.debug('Toggling light')
+            self.event_worker.switch.toggle_light()
+
+        self.toggle_button.setEnabled(False)
+
     def append_output_text(self, new_text):
         self.output_text.append(new_text)
         self.output_txt_label.setText('\n'.join(self.output_text))
+
+    def showEvent(self, event):
+        self.logger.debug('Starting main switch event loop...')
+        self.event_thread.start()
+        self.logger.debug('Done starting event loop?')
+        event.accept()
+
+    def closeEvent(self, event):
+        self.logger.debug('Close event received; cleaning up')
+        self.event_worker.switch.stop_main_loop()
+        self.logger.debug('Stopped main loop')
+        event.accept()
 
     def _set_qr_code(self):
         self.qr_img = None
@@ -39,7 +74,7 @@ class SoPiUi(QtWidgets.QMainWindow):
             dpp_uri = get_dpp_uri(self.iface_name)
             self.qr_img = ImageQt(qrcode.make(dpp_uri))
         except:
-            logger.error('Failed to fetch/generate DPP URI')
+            self.logger.error('Failed to fetch/generate DPP URI')
 
     def _setupUi(self):
         self.setObjectName("MainWindow")
@@ -95,6 +130,7 @@ class SoPiUi(QtWidgets.QMainWindow):
         self.button_layout.addWidget(self.reboot_button)
 
         self.qr_button.clicked.connect(self.toggle_qr_code)
+        self.toggle_button.clicked.connect(self.toggle_switch)
         self.reboot_button.clicked.connect(self.close)
 
         self.toggle_button.setEnabled(False)
@@ -109,3 +145,14 @@ class SoPiUi(QtWidgets.QMainWindow):
         self.reset_button.setText(_translate("MainWindow", "RESET"))
         self.toggle_button.setText(_translate("MainWindow", "Toggle"))
         self.reboot_button.setText(_translate("MainWindow", "Reboot"))
+
+    def _state_update(self, device_state):
+        (discovered, state, error_state, error_message) = device_state
+        self.logger.debug('State update called...')
+        self.logger.debug('Current state: discovered {}, state {} error_state {} error_message {}'.format(discovered, state, error_state, error_message))
+        if error_state:
+            self.logger.error('Error flag set')
+            error_text = '<font color="red">{}</font>\n'.format(error_message.decode('ascii'))
+            self.append_output_text(error_text)
+        if discovered:
+            self.toggle_button.setEnabled(True)
