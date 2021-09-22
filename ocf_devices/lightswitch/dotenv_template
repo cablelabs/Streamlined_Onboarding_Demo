@@ -1,0 +1,13 @@
+# Use mock pin factories for gpiozero (if you don't have a GPIO interface)
+GPIOZERO_PIN_FACTORY=mock
+GPIOZERO_MOCK_PIN_CLASS=mockpwmpin
+
+# Convenient to set the display if you're running over SSH
+# DISPLAY=':0'
+
+# Configuration path that the DPP-aware OCF devices use
+SO_CONFIG_PATH=<path to your config>
+# SO_CONFIG_PATH=../../configs/runtime/ocf_devices/hostap_iface.conf
+
+# QT Debugging info
+# QT_DEBUG_PLUGINS=1

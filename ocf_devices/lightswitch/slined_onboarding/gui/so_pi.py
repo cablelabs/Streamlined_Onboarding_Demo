@@ -92,7 +92,7 @@ class SoPiUi(QtWidgets.QMainWindow):
     def _set_main_widget(self):
         self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setObjectName("centralwidget")
-        self.centralwidget.setCursor(QtCore.Qt.BlankCursor)
+        # self.centralwidget.setCursor(QtCore.Qt.BlankCursor)
         self.main_hz_layout = QtWidgets.QHBoxLayout(self.centralwidget)
 
     def _set_labels(self):
