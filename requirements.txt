@@ -1,0 +1,5 @@
+gpiozero==1.6.2
+Pillow==8.3.1
+python-dotenv==0.19.0
+qrcode==7.2
+PyQt5==5.15.4
