@@ -98,7 +98,8 @@ class SoPiUi(QtWidgets.QMainWindow):
     def _set_main_widget(self):
         self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setObjectName("centralwidget")
-        # self.centralwidget.setCursor(QtCore.Qt.BlankCursor)
+        if os.environ.get('ENV') != 'dev':
+            self.centralwidget.setCursor(QtCore.Qt.BlankCursor)
         self.main_hz_layout = QtWidgets.QHBoxLayout(self.centralwidget)
 
     def _set_labels(self):
@@ -138,7 +139,7 @@ class SoPiUi(QtWidgets.QMainWindow):
         self.qr_button.clicked.connect(self.toggle_qr_code)
         self.discover_button.clicked.connect(self.discover_light)
         self.toggle_button.clicked.connect(self.toggle_switch)
-        if os.environ.get('ENV') == 'debug':
+        if os.environ.get('ENV') == 'dev':
             self.reboot_button.clicked.connect(self.close)
         else:
             self.reboot_button.clicked.connect(lambda x: os.system('sudo reboot'))
