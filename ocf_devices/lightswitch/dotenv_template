@@ -9,5 +9,8 @@ GPIOZERO_MOCK_PIN_CLASS=mockpwmpin
 SO_CONFIG_PATH=<path to your config>
 # SO_CONFIG_PATH=../../configs/runtime/ocf_devices/hostap_iface.conf
 
+# Specify a development environment (prevents reboots)
+# ENV=dev
+
 # QT Debugging info
 # QT_DEBUG_PLUGINS=1

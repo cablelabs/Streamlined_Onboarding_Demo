@@ -1,3 +1,4 @@
+import os
 import qrcode
 import logging
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -137,7 +138,10 @@ class SoPiUi(QtWidgets.QMainWindow):
         self.qr_button.clicked.connect(self.toggle_qr_code)
         self.discover_button.clicked.connect(self.discover_light)
         self.toggle_button.clicked.connect(self.toggle_switch)
-        self.reboot_button.clicked.connect(self.close)
+        if os.environ.get('ENV') == 'debug':
+            self.reboot_button.clicked.connect(self.close)
+        else:
+            self.reboot_button.clicked.connect(lambda x: os.system('sudo reboot'))
 
         self.toggle_button.setEnabled(False)
 
