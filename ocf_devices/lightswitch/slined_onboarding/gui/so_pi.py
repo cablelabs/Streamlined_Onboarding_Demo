@@ -38,6 +38,7 @@ class SoPiUi(QtWidgets.QMainWindow):
         self.qr_code_shown = not self.qr_code_shown
 
     def discover_light(self):
+        self.logger.debug('Discover light called')
         if self.event_worker.switch.light_discovered:
             return
         self.event_worker.switch.discover_light()

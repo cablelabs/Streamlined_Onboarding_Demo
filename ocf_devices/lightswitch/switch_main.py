@@ -19,7 +19,7 @@ if __name__ == "__main__":
     gpio_context = gui.SoGpioContext()
     gpio_context.set_button(17, lambda x: window.toggle_qr_code())
     gpio_context.set_button(22, lambda x: window.discover_light())
-    gpio_context.set_button(23, lambda x: window.toggle_light())
+    gpio_context.set_button(23, lambda x: window.toggle_switch())
     if os.environ.get('ENV') == 'dev':
         gpio_context.set_button(27, lambda x: window.close())
         window.show()
