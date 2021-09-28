@@ -37,6 +37,11 @@ class SoPiUi(QtWidgets.QMainWindow):
             self.append_output_text('Scan the QR code!')
         self.qr_code_shown = not self.qr_code_shown
 
+    def discover_light(self):
+        if self.event_worker.switch.light_discovered:
+            return
+        self.event_worker.switch.discover_light()
+
     def toggle_switch(self):
         self.logger.debug('Toggle button pressed')
         if self.qr_code_shown:
@@ -121,9 +126,9 @@ class SoPiUi(QtWidgets.QMainWindow):
         self.qr_button = QtWidgets.QPushButton()
         self.qr_button.setObjectName("qr_button")
         self.button_layout.addWidget(self.qr_button)
-        self.reset_button = QtWidgets.QPushButton()
-        self.reset_button.setObjectName("reset_button")
-        self.button_layout.addWidget(self.reset_button)
+        self.discover_button = QtWidgets.QPushButton()
+        self.discover_button.setObjectName("discover_button")
+        self.button_layout.addWidget(self.discover_button)
         self.toggle_button = QtWidgets.QPushButton()
         self.toggle_button.setObjectName("toggle_button")
         self.button_layout.addWidget(self.toggle_button)
@@ -132,11 +137,11 @@ class SoPiUi(QtWidgets.QMainWindow):
         self.button_layout.addWidget(self.reboot_button)
 
         self.qr_button.clicked.connect(self.toggle_qr_code)
+        self.discover_button.clicked.connect(self.discover_light)
         self.toggle_button.clicked.connect(self.toggle_switch)
         self.reboot_button.clicked.connect(self.close)
 
         self.toggle_button.setEnabled(False)
-        self.reset_button.setEnabled(False)
 
         self.main_hz_layout.addLayout(self.button_layout, 1)
 
@@ -144,7 +149,7 @@ class SoPiUi(QtWidgets.QMainWindow):
         _translate = QtCore.QCoreApplication.translate
         self.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.qr_button.setText(_translate("MainWindow", "QR Code"))
-        self.reset_button.setText(_translate("MainWindow", "RESET"))
+        self.discover_button.setText(_translate("MainWindow", "Discover Light"))
         self.toggle_button.setText(_translate("MainWindow", "Toggle"))
         self.reboot_button.setText(_translate("MainWindow", "Reboot"))
 
