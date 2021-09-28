@@ -11,7 +11,6 @@ class SoPiUi(QtWidgets.QMainWindow):
         super().__init__()
         self.logger = logging.getLogger(__name__)
         self.iface_name = iface_name
-        self.output_text = list()
         self._set_qr_code()
         self._setupUi()
         self._off_img = QtGui.QPixmap('./off.png')
@@ -57,8 +56,7 @@ class SoPiUi(QtWidgets.QMainWindow):
         self.toggle_button.setEnabled(False)
 
     def append_output_text(self, new_text):
-        self.output_text.append(new_text)
-        self.output_txt_label.setText('\n'.join(self.output_text))
+        self.output_txt_label.setText(new_text)
 
     def showEvent(self, event):
         self.logger.debug('Starting main switch event loop...')
@@ -159,7 +157,7 @@ class SoPiUi(QtWidgets.QMainWindow):
         self.logger.debug('Current state: discovered {}, state {} error_state {} error_message {}'.format(discovered, state, error_state, error_message))
         if error_state:
             self.logger.error('Error flag set')
-            error_text = '<font color="red">{}</font>\n'.format(error_message.decode('ascii'))
+            error_text = '<font color="red">{}</font>'.format(error_message.decode('ascii'))
             self.append_output_text(error_text)
         if not discovered:
             return
