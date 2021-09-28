@@ -4,6 +4,12 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+def start_dpp_listen(iface_name):
+    logger.info('Starting DPP listen')
+    dpp_listen_args = ['dpp_listen', '2412']
+    # TODO: This currently doesn't do any error checking/validation
+    return _call_wpa_cli(iface_name, dpp_listen_args)
+
 def get_dpp_uri(iface_name):
     logger.info('Trying to fetch DPP URI for interface {}'.format(iface_name))
     try:

@@ -2,7 +2,7 @@ import qrcode
 import logging
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PIL.ImageQt import ImageQt
-from slined_onboarding import get_dpp_uri
+from slined_onboarding import get_dpp_uri, start_dpp_listen
 from .so_img import SoImgLabel
 from .switch_worker import SwitchWorker
 
@@ -73,6 +73,8 @@ class SoPiUi(QtWidgets.QMainWindow):
         try:
             dpp_uri = get_dpp_uri(self.iface_name)
             self.qr_img = ImageQt(qrcode.make(dpp_uri))
+            listen_output = start_dpp_listen(self.iface_name)
+            self.logger.debug('DPP listen init output: {}'.format(listen_output))
         except:
             self.logger.error('Failed to fetch/generate DPP URI')
 
