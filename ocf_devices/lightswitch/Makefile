@@ -4,6 +4,7 @@ ifeq ($(CROSS), 1)
 	export CC=arm-linux-gnueabihf-gcc
 endif
 
+# Lite specific
 LITE_DIR=../../deps/SO_IoTivity-Lite
 CLIENT_LIB=$(LITE_DIR)/port/linux/libiotivity-lite-client.a
 SERVER_LIB=$(LITE_DIR)/port/linux/libiotivity-lite-server.a
@@ -13,20 +14,16 @@ CFLAGS=-fPIC -fno-asynchronous-unwind-tables -fno-omit-frame-pointer -ffreestand
 LIBS=-lm -pthread -lrt -lwpa_client
 SO_DPP=1
 
-all: lightswitch
+all: slined_onboarding/resources/libsoswitch.so
 
 $(LITE_LIBS):
 	cd $(dir $@) && make CC=$(CC) SO_DPP=1 $(notdir $@)
-
-.PHONY: clean-lite
-clean-lite:
-	cd $(LITE_DIR)/port/linux && make cleanall
 
 soswitch.o: soswitch.c
 	@$(CC) -c -o $@ $^ -DOC_CLIENT $(CFLAGS) $(LITE_INCLUDES) $(LIBS)
 	@echo $(CC) $@
 
-libsoswitch.so: soswitch.o $(CLIENT_LIB)
+slined_onboarding/resources/libsoswitch.so: soswitch.o $(CLIENT_LIB)
 	@$(CC) -shared -o $@ $^ -DOC_CLIENT $(CFLAGS) $(LITE_INCLUDES) $(LIBS)
 	@echo $(CC) $@
 
@@ -37,3 +34,7 @@ lightswitch: lightswitch.c $(CLIENT_LIB)
 
 clean:
 	rm -rf lightswitch lightswitch_creds libsoswitch.so soswitch.o
+
+.PHONY: clean-lite
+clean-lite:
+	cd $(LITE_DIR)/port/linux && make cleanall
