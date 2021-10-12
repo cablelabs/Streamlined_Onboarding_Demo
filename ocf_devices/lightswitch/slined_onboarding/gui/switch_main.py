@@ -25,6 +25,3 @@ def gui_main():
         gpio_context.set_button(27, lambda x: os.system('sudo reboot'))
         window.showFullScreen()
     sys.exit(app.exec_())
-
-if __name__ == '__main__':
-    gui_main()
