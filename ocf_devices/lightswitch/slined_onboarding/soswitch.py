@@ -1,15 +1,18 @@
 import logging
 import ctypes
+import pkg_resources
 
 class SWITCHSTATE(ctypes.Structure):
     _fields_ = [('state', ctypes.c_bool), ('discovered', ctypes.c_bool),
             ('error_state', ctypes.c_bool), ('error_message', ctypes.c_char_p)]
 
 class SoSwitch:
-    def __init__(self, soswitch_lib_path, so_config_path, state_update_cb=None):
+    def __init__(self, so_config_path, state_update_cb=None):
         self.logger = logging.getLogger(__name__)
         self.logger.debug('Initializing ctypes library for soswitch.')
-        self.soswitch = ctypes.CDLL(soswitch_lib_path)
+        lib_path = pkg_resources.resource_filename(__name__, 'resources/libsoswitch.so')
+        self.logger.debug('So Switch library path: {}'.format(lib_path))
+        self.soswitch = ctypes.CDLL(lib_path)
         self._configure_lib()
 
         self.light_state = False
