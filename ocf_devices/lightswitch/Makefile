@@ -14,7 +14,14 @@ CFLAGS=-fPIC -fno-asynchronous-unwind-tables -fno-omit-frame-pointer -ffreestand
 LIBS=-lm -pthread -lrt -lwpa_client
 SO_DPP=1
 
+# Python build items
+BUILD_DIRS=build dist so_lightswitch.egg-info
+
 all: slined_onboarding/resources/libsoswitch.so
+
+.PHONY: dist
+dist: slined_onboarding/resources/libsoswitch.so
+	python -m build
 
 $(LITE_LIBS):
 	cd $(dir $@) && make CC=$(CC) SO_DPP=1 $(notdir $@)
@@ -34,6 +41,7 @@ lightswitch: lightswitch.c $(CLIENT_LIB)
 
 clean:
 	rm -rf lightswitch lightswitch_creds libsoswitch.so soswitch.o
+	rm -rf $(BUILD_DIRS)
 
 .PHONY: clean-lite
 clean-lite:
