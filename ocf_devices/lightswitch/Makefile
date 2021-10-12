@@ -40,7 +40,7 @@ lightswitch: lightswitch.c $(CLIENT_LIB)
 	@echo $(CC) $@
 
 clean:
-	rm -rf lightswitch lightswitch_creds libsoswitch.so soswitch.o
+	rm -rf lightswitch lightswitch_creds soswitch.o slined_onboarding/resources/libsoswitch.so
 	rm -rf $(BUILD_DIRS)
 
 .PHONY: clean-lite
