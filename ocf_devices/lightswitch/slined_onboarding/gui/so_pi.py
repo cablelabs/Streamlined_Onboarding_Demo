@@ -12,10 +12,10 @@ class SoPiUi(QtWidgets.QMainWindow):
         super().__init__()
         self.logger = logging.getLogger(__name__)
         self.iface_name = iface_name
-        self._set_qr_code()
-        self._setupUi()
         self._off_img = QtGui.QPixmap('./off.png')
         self._on_img = QtGui.QPixmap('./on.png')
+        self._set_qr_code()
+        self._setupUi()
 
         self.event_worker = SwitchWorker()
         self.event_thread = QtCore.QThread()
@@ -106,7 +106,7 @@ class SoPiUi(QtWidgets.QMainWindow):
     def _set_labels(self):
         self.label_layout = QtWidgets.QVBoxLayout()
 
-        self.img_label = SoImgLabel()
+        self.img_label = SoImgLabel(self._off_img)
         self.img_label.setGeometry(QtCore.QRect(5, 5, 210, 210))
         self.img_label.setObjectName("img_label")
 
