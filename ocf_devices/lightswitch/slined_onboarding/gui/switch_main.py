@@ -6,9 +6,11 @@ from PyQt5 import QtWidgets
 from slined_onboarding import gui
 
 def gui_main():
+    logging.basicConfig(format='%(levelname)s [%(name)s]: %(message)s', level=logging.DEBUG)
     logger = logging.getLogger(__name__)
+    logger.debug('Current directory is {}'.format(os.getcwd()))
     logger.debug('Loading environment vars from .env')
-    load_dotenv()
+    load_dotenv('./.env')
     logger.debug('Starting the GUI')
     app = QtWidgets.QApplication(sys.argv)
     window = gui.SoPiUi(sys.argv[1])
@@ -22,4 +24,7 @@ def gui_main():
     else:
         gpio_context.set_button(27, lambda x: os.system('sudo reboot'))
         window.showFullScreen()
-    return app.exec_()
+    sys.exit(app.exec_())
+
+if __name__ == '__main__':
+    gui_main()
