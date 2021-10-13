@@ -10,7 +10,7 @@ def gui_main():
     logger = logging.getLogger(__name__)
     logger.debug('Current directory is {}'.format(os.getcwd()))
     logger.debug('Loading environment vars from .env')
-    load_dotenv('./.env')
+    load_dotenv()
     iface_name = os.environ.get('SO_IFACE')
     if iface_name is None:
         logger.error('Environment variable SO_IFACE not set - check configuration file.')
