@@ -9,6 +9,9 @@ GPIOZERO_MOCK_PIN_CLASS=mockpwmpin
 SO_CONFIG_PATH=<path to your config>
 # SO_CONFIG_PATH=../../configs/runtime/ocf_devices/hostap_iface.conf
 
+# Which interface should be used for Easy Connect operations
+SO_IFACE=wlan1
+
 # Specify a development environment (prevents reboots)
 # ENV=dev
 
