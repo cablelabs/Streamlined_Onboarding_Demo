@@ -7,7 +7,7 @@ class SWITCHSTATE(ctypes.Structure):
             ('error_state', ctypes.c_bool), ('error_message', ctypes.c_char_p)]
 
 class SoSwitch:
-    def __init__(self, so_config_path, state_update_cb=None):
+    def __init__(self, wpa_ctrl_iface, state_update_cb=None):
         self.logger = logging.getLogger(__name__)
         self.logger.debug('Initializing ctypes library for soswitch.')
         lib_path = pkg_resources.resource_filename(__name__, 'resources/libsoswitch.so')
@@ -18,7 +18,7 @@ class SoSwitch:
         self.light_state = False
         self.light_discovered = False
 
-        self._so_config_path = so_config_path
+        self._wpa_ctrl_iface = wpa_ctrl_iface
         self._state_update_cb = state_update_cb
 
     def _configure_lib(self):
@@ -37,7 +37,7 @@ class SoSwitch:
 
     def main_event_loop(self):
         self.logger.debug('Invoking main IoTivity-Lite event loop')
-        self.soswitch.so_switch_init(b'./lightswitch_creds', self._so_config_path.encode('utf8'), self._state_cb)
+        self.soswitch.so_switch_init(b'./lightswitch_creds', self._wpa_ctrl_iface.encode('utf8'), self._state_cb)
         self.soswitch.so_switch_main_loop()
         self.logger.debug('Main event loop finished')
 

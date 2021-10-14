@@ -152,7 +152,7 @@ handle_signal(int signal)
 }
 
 int
-so_switch_init(char *storage_path, char *so_config_path, void (*cb)(switch_state *state))
+so_switch_init(char *storage_path, char *so_ctrl_iface, void (*cb)(switch_state *state))
 {
   int init;
   struct sigaction sa;
@@ -175,7 +175,7 @@ so_switch_init(char *storage_path, char *so_config_path, void (*cb)(switch_state
 
   if (oc_so_info_init() == 0) {
     OC_DBG("Generated streamlined onboarding info");
-    if (dpp_so_init(so_config_path) < 0 || dpp_send_so_info() < 0) {
+    if (dpp_so_init(so_ctrl_iface) < 0 || dpp_send_so_info() < 0) {
       OC_ERR("Failed to provide streamlined onboarding information to wpa_supplicant");
     }
   }
