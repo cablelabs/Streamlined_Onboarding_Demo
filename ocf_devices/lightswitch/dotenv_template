@@ -1,19 +1,44 @@
-# Use mock pin factories for gpiozero (if you don't have a GPIO interface)
-GPIOZERO_PIN_FACTORY=mock
-GPIOZERO_MOCK_PIN_CLASS=mockpwmpin
+#-----------------------------------#
+# Development environment variables |
+#-----------------------------------#
+# Copy this example file to ./.env - This file is read using python-dotenv,
+# which will automatically load the environment variables specified here. Known
+# environment variables are listed below with brief descriptions
 
-# Convenient to set the display if you're running over SSH
+#--------------------#
+# Required Variables |
+#--------------------#
+# These variables must be set for the streamlined onboarding switch to properly
+# operate and interact with the Wi-Fi stack.
+
+# Which interface should be used for Easy Connect operations.
+# SO_IFACE specifies the name of the Wi-Fi interface that the device will use
+# for streamliend onboarding. WPA_CTRL_IFACE specifies the full path to the
+# wpa_supplicant control socket (typically located at
+# /var/run/wpa_supplicant/<iface_name>)
+SO_IFACE=wlan0
+WPA_CTRL_IFACE=/var/run/wpa_supplicant/wlan0
+
+#--------------------------------#
+# Optional Development Variables |
+#--------------------------------#
+# These variables do not need to be set for the application to run. However,
+# they are useful for development environments.
+
+# gpiozero can be configured to operate on systems that do not have a GPIO
+# interface. These variables enable this; see gpiozero documentation for further
+# information.
+# GPIOZERO_PIN_FACTORY=mock
+# GPIOZERO_MOCK_PIN_CLASS=mockpwmpin
+
+# Convenient to set the display if you're running over SSH, instead of directly
+# on the system running the application.
 # DISPLAY=':0'
 
-# Configuration path that the DPP-aware OCF devices use
-SO_CONFIG_PATH=<path to your config>
-# SO_CONFIG_PATH=../../configs/runtime/ocf_devices/hostap_iface.conf
-
-# Which interface should be used for Easy Connect operations
-SO_IFACE=wlan1
-
-# Specify a development environment (prevents reboots)
+# Specify a development environment to ensure that the reboot button simply
+# exits the application. The application will also not start in fullscreen in
+# the development mode.
 # ENV=dev
 
-# QT Debugging info
+# QT Debugging info may be useful when tracking down some harder to find issues.
 # QT_DEBUG_PLUGINS=1
