@@ -3,7 +3,7 @@
 #-----------------------------------#
 # Copy this example file to ./.env - This file is read using python-dotenv,
 # which will automatically load the environment variables specified here. Known
-# environment variables are listed below with brief descriptions
+# environment variables are listed below with brief descriptions.
 
 #--------------------#
 # Required Variables |
@@ -18,6 +18,11 @@
 # /var/run/wpa_supplicant/<iface_name>)
 SO_IFACE=wlan0
 WPA_CTRL_IFACE=/var/run/wpa_supplicant/wlan0
+
+# Path to credential directory for OCF Devices. Switch applications default to
+# ./lightswitch_creds
+# This directory should exist should provide write access.
+SO_LIGHTSWITCH_CREDS=/var/local/streamlined_onboarding/lightswitch_creds
 
 #--------------------------------#
 # Optional Development Variables |
