@@ -45,7 +45,7 @@ def run_cli():
     switch.stop_main_loop()
     event_thread.join()
 
-if __name__ == '__main__':
+def cli_main():
     # logging.basicConfig(format='%(levelname)s [%(name)s]: %(message)s', level=logging.DEBUG)
     logging.basicConfig(format='%(levelname)s [%(name)s]: %(message)s', level=logging.INFO)
     logger = logging.getLogger(__name__)
