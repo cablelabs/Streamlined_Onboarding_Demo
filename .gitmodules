@@ -4,3 +4,4 @@
 [submodule "deps/SO_IoTivity-Lite"]
 	path = deps/SO_IoTivity-Lite
 	url = git@github.com:cablelabs/SO_IoTivity-Lite.git
+	ignore = dirty
