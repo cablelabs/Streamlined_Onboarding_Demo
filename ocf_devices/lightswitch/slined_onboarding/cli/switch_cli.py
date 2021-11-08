@@ -9,6 +9,7 @@ from slined_onboarding import SoSwitch
 def _display_menu():
     menu_str = ('\n1: Discover Light\n'
     '2: Toggle Light State\n'
+    '3: Display DPP URI\n'
     '9: Exit\n')
     print(menu_str)
 
@@ -45,16 +46,17 @@ def run_cli():
     switch.stop_main_loop()
     event_thread.join()
 
-def cli_main():
+if __name__ == '__main__':
     # logging.basicConfig(format='%(levelname)s [%(name)s]: %(message)s', level=logging.DEBUG)
     logging.basicConfig(format='%(levelname)s [%(name)s]: %(message)s', level=logging.INFO)
     logger = logging.getLogger(__name__)
     load_dotenv()
     cli_cv = threading.Condition()
-    if os.environ.get('SO_CONFIG_PATH') is None:
-        logger.error('SO_CONFIG_PATH variable not set!')
+    wpa_ctrl_iface = os.environ.get('WPA_CTRL_IFACE')
+    if wpa_ctrl_iface is None:
+        logger.error('WPA_CTRL_IFACE variable not set!')
         sys.exit(-1)
-    switch = SoSwitch('./libsoswitch.so', os.environ.get('SO_CONFIG_PATH'), state_update_print)
+    switch = SoSwitch(wpa_ctrl_iface, creds_dir=os.environ.get('SO_LIGHTSWITCH_CREDS'), state_update_cb=state_update_print)
     quit_event = threading.Event()
     event_thread = threading.Thread(target=switch.main_event_loop)
     event_thread.start()
