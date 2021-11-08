@@ -1,6 +1,7 @@
 import os
 import qrcode
 import logging
+import pkg_resources
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PIL.ImageQt import ImageQt
 from slined_onboarding import get_dpp_uri, start_dpp_listen
@@ -12,8 +13,8 @@ class SoPiUi(QtWidgets.QMainWindow):
         super().__init__()
         self.logger = logging.getLogger(__name__)
         self.iface_name = iface_name
-        self._off_img = QtGui.QPixmap('./off.png')
-        self._on_img = QtGui.QPixmap('./on.png')
+        self._off_img = QtGui.QPixmap(pkg_resources.resource_filename(__name__, 'images/off.png'))
+        self._on_img = QtGui.QPixmap(pkg_resources.resource_filename(__name__, 'images/on.png'))
         self._set_qr_code()
         self._setupUi()
 

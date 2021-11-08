@@ -1,0 +1,4 @@
+[Desktop Entry]
+Type=Application
+Name=SO Lightswitch
+Exec=/bin/bash -c 'set -a && . /usr/local/etc/streamlined_onboarding/prod.env && /opt/venvs/so_deploy/bin/python -m slined_onboarding.gui'

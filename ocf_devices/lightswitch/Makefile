@@ -4,6 +4,7 @@ ifeq ($(CROSS), 1)
 	export CC=arm-linux-gnueabihf-gcc
 endif
 
+# Lite specific
 LITE_DIR=../../deps/SO_IoTivity-Lite
 CLIENT_LIB=$(LITE_DIR)/port/linux/libiotivity-lite-client.a
 SERVER_LIB=$(LITE_DIR)/port/linux/libiotivity-lite-server.a
@@ -13,20 +14,23 @@ CFLAGS=-fPIC -fno-asynchronous-unwind-tables -fno-omit-frame-pointer -ffreestand
 LIBS=-lm -pthread -lrt -lwpa_client
 SO_DPP=1
 
-all: lightswitch
+# Python build items
+BUILD_DIRS=build dist so_lightswitch.egg-info
+
+all: slined_onboarding/resources/libsoswitch.so
+
+.PHONY: dist
+dist: slined_onboarding/resources/libsoswitch.so
+	python -m build
 
 $(LITE_LIBS):
 	cd $(dir $@) && make CC=$(CC) SO_DPP=1 $(notdir $@)
-
-.PHONY: clean-lite
-clean-lite:
-	cd $(LITE_DIR)/port/linux && make cleanall
 
 soswitch.o: soswitch.c
 	@$(CC) -c -o $@ $^ -DOC_CLIENT $(CFLAGS) $(LITE_INCLUDES) $(LIBS)
 	@echo $(CC) $@
 
-libsoswitch.so: soswitch.o $(CLIENT_LIB)
+slined_onboarding/resources/libsoswitch.so: soswitch.o $(CLIENT_LIB)
 	@$(CC) -shared -o $@ $^ -DOC_CLIENT $(CFLAGS) $(LITE_INCLUDES) $(LIBS)
 	@echo $(CC) $@
 
@@ -36,4 +40,9 @@ lightswitch: lightswitch.c $(CLIENT_LIB)
 	@echo $(CC) $@
 
 clean:
-	rm -rf lightswitch lightswitch_creds libsoswitch.so soswitch.o
+	rm -rf lightswitch lightswitch_creds soswitch.o slined_onboarding/resources/libsoswitch.so
+	rm -rf $(BUILD_DIRS)
+
+.PHONY: clean-lite
+clean-lite:
+	cd $(LITE_DIR)/port/linux && make cleanall

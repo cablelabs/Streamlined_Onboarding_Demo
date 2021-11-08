@@ -8,7 +8,7 @@ class SwitchWorker(QObject):
     def __init__(self):
         super().__init__()
         self.logger = logging.getLogger(__name__)
-        self.switch = SoSwitch('./libsoswitch.so', os.environ.get('SO_CONFIG_PATH'), self._state_update)
+        self.switch = SoSwitch(os.environ.get('WPA_CTRL_IFACE'), os.environ.get('SO_LIGHTSWITCH_CREDS'), self._state_update)
 
     def run(self):
         self.logger.debug('Thread run called')

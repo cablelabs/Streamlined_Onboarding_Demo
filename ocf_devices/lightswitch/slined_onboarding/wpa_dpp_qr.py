@@ -38,6 +38,7 @@ def _gen_dpp_uri(iface_name):
 def _call_wpa_cli(iface_name, cmd_args):
     base_args = ['wpa_cli', '-i', iface_name]
     full_args = base_args + cmd_args
+    logger.debug('Arguments for wpa_cli call: {}'.format(full_args))
     result = subprocess.run(full_args, capture_output=True)
     if result.returncode != 0:
         raise Exception
