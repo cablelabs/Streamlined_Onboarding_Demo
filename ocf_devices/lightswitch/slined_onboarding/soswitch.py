@@ -1,13 +1,14 @@
 import logging
 import ctypes
 import pkg_resources
+import os
 
 class SWITCHSTATE(ctypes.Structure):
     _fields_ = [('state', ctypes.c_bool), ('discovered', ctypes.c_bool),
             ('error_state', ctypes.c_bool), ('error_message', ctypes.c_char_p)]
 
 class SoSwitch:
-    def __init__(self, wpa_ctrl_iface, creds_dir='./lightswitch_creds', state_update_cb=None):
+    def __init__(self, wpa_ctrl_iface, creds_dir='./lightswitch_creds', state_update_cb=None, persist_creds=True):
         self.logger = logging.getLogger(__name__)
         self.logger.debug('Initializing ctypes library for soswitch.')
         lib_path = pkg_resources.resource_filename(__name__, 'resources/libsoswitch.so')
@@ -21,6 +22,7 @@ class SoSwitch:
         self._wpa_ctrl_iface = wpa_ctrl_iface
         self._creds_dir = creds_dir
         self._state_update_cb = state_update_cb
+        self._persist_creds = persist_creds
 
     def _configure_lib(self):
         self._state_cb_type = ctypes.CFUNCTYPE(None, ctypes.POINTER(SWITCHSTATE))
@@ -45,6 +47,10 @@ class SoSwitch:
     def stop_main_loop(self):
         self.logger.debug('Signaling main event loop to exit')
         self.soswitch.handle_signal(1)
+        if not self._persist_creds:
+            self.logger.debug('Removing credential files')
+            for f in os.listdir(self._creds_dir):
+                os.remove(os.path.join(self._creds_dir, f))
 
     def discover_light(self):
         self.soswitch.discover_light()

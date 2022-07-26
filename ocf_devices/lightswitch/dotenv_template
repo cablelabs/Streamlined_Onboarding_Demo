@@ -47,3 +47,7 @@ SO_LIGHTSWITCH_CREDS=/var/local/streamlined_onboarding/lightswitch_creds
 
 # QT Debugging info may be useful when tracking down some harder to find issues.
 # QT_DEBUG_PLUGINS=1
+
+# Whether or not to persist credentials across runs (any value indicates that
+# credentials should persist)
+# SO_PERSIST_CREDS=1
