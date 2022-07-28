@@ -5,7 +5,7 @@ ifeq ($(CROSS), 1)
 endif
 
 # Lite specific
-LITE_DIR=../../deps/SO_IoTivity-Lite
+LITE_DIR=../deps/SO_IoTivity-Lite
 CLIENT_LIB=$(LITE_DIR)/port/linux/libiotivity-lite-client.a
 SERVER_LIB=$(LITE_DIR)/port/linux/libiotivity-lite-server.a
 LITE_LIBS=$(CLIENT_LIB) $(SERVER_LIB)
@@ -26,21 +26,21 @@ dist: slined_onboarding/resources/libsoswitch.so
 $(LITE_LIBS):
 	cd $(dir $@) && make CC=$(CC) SO_DPP=1 $(notdir $@)
 
-soswitch.o: soswitch.c
+slined_onboarding/lightswitch/soswitch.o: slined_onboarding/lightswitch/soswitch.c
 	@$(CC) -c -o $@ $^ -DOC_CLIENT $(CFLAGS) $(LITE_INCLUDES) $(LIBS)
 	@echo $(CC) $@
 
-slined_onboarding/resources/libsoswitch.so: soswitch.o $(CLIENT_LIB)
+slined_onboarding/resources/libsoswitch.so: slined_onboarding/lightswitch/soswitch.o $(CLIENT_LIB)
 	@$(CC) -shared -o $@ $^ -DOC_CLIENT $(CFLAGS) $(LITE_INCLUDES) $(LIBS)
 	@echo $(CC) $@
 
-lightswitch: lightswitch.c $(CLIENT_LIB)
+lightswitch: slined_onboarding/lightswitch/lightswitch.c $(CLIENT_LIB)
 	@mkdir -p $@_creds
 	@$(CC) -o $@ $^ $(CLIENT_LIB) -DOC_CLIENT $(CFLAGS) $(LITE_INCLUDES) $(LIBS)
 	@echo $(CC) $@
 
 clean:
-	rm -rf lightswitch lightswitch_creds soswitch.o slined_onboarding/resources/libsoswitch.so
+	rm -rf lightswitch lightswitch_creds slined_onboarding/lightswitch/soswitch.o slined_onboarding/resources/libsoswitch.so
 	rm -rf $(BUILD_DIRS)
 
 .PHONY: clean-lite
