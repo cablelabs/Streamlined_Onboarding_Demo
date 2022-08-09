@@ -3,9 +3,9 @@ import os
 import sys
 from dotenv import load_dotenv
 from PyQt5 import QtWidgets
-from slined_onboarding import gui
+from slined_onboarding.lightswitch import switch_gui
 
-def gui_main():
+def switch_main():
     logging.basicConfig(format='%(levelname)s [%(name)s]: %(message)s', level=logging.DEBUG)
     logger = logging.getLogger(__name__)
     logger.debug('Current directory is {}'.format(os.getcwd()))

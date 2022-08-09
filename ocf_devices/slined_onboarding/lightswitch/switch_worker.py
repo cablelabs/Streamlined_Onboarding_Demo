@@ -1,7 +1,7 @@
 import os
 import logging
 from PyQt5.QtCore import QObject, pyqtSignal
-from slined_onboarding import SoSwitch
+from slined_onboarding.lightswitch import SoSwitch
 
 class SwitchWorker(QObject):
     device_state = pyqtSignal(tuple)

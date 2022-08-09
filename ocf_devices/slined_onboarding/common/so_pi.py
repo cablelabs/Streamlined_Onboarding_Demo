@@ -4,9 +4,9 @@ import logging
 import pkg_resources
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PIL.ImageQt import ImageQt
-from slined_onboarding import get_dpp_uri, start_dpp_listen
+from .wpa_dpp_qr import get_dpp_uri, start_dpp_listen
 from .so_img import SoImgLabel
-from .switch_worker import SwitchWorker
+from slined_onboarding.lightswitch.switch_worker import SwitchWorker
 
 class SoPiUi(QtWidgets.QMainWindow):
     def __init__(self, iface_name):

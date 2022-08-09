@@ -1,0 +1,3 @@
+from slined_onboarding.lightswitch.soswitch import SoSwitch
+from slined_onboarding.lightswitch.switch_gui import SwitchUi
+from slined_onboarding.lightswitch.switch_main import switch_main
