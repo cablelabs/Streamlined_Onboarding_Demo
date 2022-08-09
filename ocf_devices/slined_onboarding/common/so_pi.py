@@ -41,7 +41,7 @@ class SoPiUi(QtWidgets.QMainWindow):
         self.output_txt_label.setText(new_text)
 
     def showEvent(self, event):
-        self.logger.debug('Starting main switch event loop...')
+        self.logger.debug('Starting main event loop...')
         self.event_thread.start()
         self.logger.debug('Done starting event loop?')
         event.accept()
@@ -94,7 +94,7 @@ class SoPiUi(QtWidgets.QMainWindow):
         self.output_txt_label.setStyleSheet('border: 1px solid gray')
         self.output_txt_label.setWordWrap(True)
         self.output_txt_label.setMaximumHeight(40)
-        self.output_txt_label.setText('Streamlined Onboarding OCF Pi Switch')
+        self.output_txt_label.setText('Streamlined Onboarding OCF Pi')
 
         self.label_layout.addWidget(self.img_label, 4)
         self.label_layout.addWidget(self.output_txt_label, 1)
@@ -107,35 +107,27 @@ class SoPiUi(QtWidgets.QMainWindow):
         self.qr_button = QtWidgets.QPushButton()
         self.qr_button.setObjectName("qr_button")
         self.button_layout.addWidget(self.qr_button)
-        self.reboot_button = QtWidgets.QPushButton()
-        self.reboot_button.setObjectName("reboot_button")
-        self.button_layout.addWidget(self.reboot_button)
-
         self.discover_button = QtWidgets.QPushButton()
         self.discover_button.setObjectName("discover_button")
         self.button_layout.addWidget(self.discover_button)
         self.toggle_button = QtWidgets.QPushButton()
         self.toggle_button.setObjectName("toggle_button")
         self.button_layout.addWidget(self.toggle_button)
+        self.reboot_button = QtWidgets.QPushButton()
+        self.reboot_button.setObjectName("reboot_button")
+        self.button_layout.addWidget(self.reboot_button)
+        self.main_hz_layout.addLayout(self.button_layout, 1)
 
         self.qr_button.clicked.connect(self.toggle_qr_code)
-        self.discover_button.clicked.connect(self.discover_light)
-        self.toggle_button.clicked.connect(self.toggle_switch)
         if os.environ.get('ENV') == 'dev':
             self.reboot_button.clicked.connect(self.close)
         else:
             self.reboot_button.clicked.connect(lambda x: os.system('sudo reboot'))
 
-        self.toggle_button.setEnabled(False)
-
-        self.main_hz_layout.addLayout(self.button_layout, 1)
-
     def _retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
         self.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.qr_button.setText(_translate("MainWindow", "QR Code"))
-        self.discover_button.setText(_translate("MainWindow", "Discover Light"))
-        self.toggle_button.setText(_translate("MainWindow", "Toggle"))
         self.reboot_button.setText(_translate("MainWindow", "Reboot"))
 
     # Should be overridden by inheriting classes

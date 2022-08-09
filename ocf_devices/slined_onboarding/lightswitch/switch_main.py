@@ -3,7 +3,8 @@ import os
 import sys
 from dotenv import load_dotenv
 from PyQt5 import QtWidgets
-from slined_onboarding.lightswitch import switch_gui
+from slined_onboarding.common import SoGpioContext
+from slined_onboarding.lightswitch import SwitchUi
 
 def switch_main():
     logging.basicConfig(format='%(levelname)s [%(name)s]: %(message)s', level=logging.DEBUG)
@@ -17,8 +18,8 @@ def switch_main():
         sys.exit(1)
     logger.debug('Starting the GUI')
     app = QtWidgets.QApplication(sys.argv)
-    window = gui.SoPiUi(iface_name)
-    gpio_context = gui.SoGpioContext()
+    window = SwitchUi(iface_name)
+    gpio_context = SoGpioContext()
     gpio_context.set_button(17, lambda x: window.toggle_qr_code())
     gpio_context.set_button(22, lambda x: window.discover_light())
     gpio_context.set_button(23, lambda x: window.toggle_switch())

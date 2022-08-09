@@ -11,7 +11,7 @@ class SoSwitch:
     def __init__(self, wpa_ctrl_iface, creds_dir='./lightswitch_creds', state_update_cb=None, persist_creds=True):
         self.logger = logging.getLogger(__name__)
         self.logger.debug('Initializing ctypes library for soswitch.')
-        lib_path = pkg_resources.resource_filename(__name__, 'resources/libsoswitch.so')
+        lib_path = pkg_resources.resource_filename('slined_onboarding', 'resources/libsoswitch.so')
         self.logger.debug('So Switch library path: {}'.format(lib_path))
         self.soswitch = ctypes.CDLL(lib_path)
         self._configure_lib()
