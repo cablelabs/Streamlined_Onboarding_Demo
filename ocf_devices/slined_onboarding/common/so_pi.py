@@ -6,10 +6,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PIL.ImageQt import ImageQt
 from .wpa_dpp_qr import get_dpp_uri, start_dpp_listen
 from .so_img import SoImgLabel
-from slined_onboarding.lightswitch.switch_worker import SwitchWorker
 
 class SoPiUi(QtWidgets.QMainWindow):
-    def __init__(self, iface_name):
+    def __init__(self, event_worker, iface_name):
         super().__init__()
         self.logger = logging.getLogger(__name__)
         self.iface_name = iface_name
@@ -18,12 +17,12 @@ class SoPiUi(QtWidgets.QMainWindow):
         self._set_qr_code()
         self._setupUi()
 
-        self.event_worker = SwitchWorker()
+        self.event_worker = event_worker
         self.event_thread = QtCore.QThread()
         self.event_worker.moveToThread(self.event_thread)
         self.event_thread.started.connect(self.event_worker.run)
 
-        self.event_worker.device_state.connect(self._state_update)
+        self.event_worker.device_state.connect(self._state_update_ui)
 
     def toggle_qr_code(self):
         if self.qr_img is None:
@@ -32,31 +31,11 @@ class SoPiUi(QtWidgets.QMainWindow):
             return
 
         if self.qr_code_shown:
-            self.img_label.set_img(self._on_img if self.event_worker.switch.light_state else self._off_img)
+            self.img_label.set_img(self._on_img if self.event_worker.ocf_device.light_state else self._off_img)
         else:
             self.img_label.set_img(QtGui.QPixmap.fromImage(self.qr_img))
             self.append_output_text('Scan the QR code!')
         self.qr_code_shown = not self.qr_code_shown
-
-    def discover_light(self):
-        self.logger.debug('Discover light called')
-        if self.event_worker.switch.light_discovered:
-            return
-        self.event_worker.switch.discover_light()
-
-    def toggle_switch(self):
-        self.logger.debug('Toggle button pressed')
-        if self.qr_code_shown:
-            self.toggle_qr_code()
-
-        if not self.event_worker.switch.light_discovered:
-            self.logger.error('Light not discovered!')
-            self.append_output_text('Light not discovered')
-        else:
-            self.logger.debug('Toggling light')
-            self.event_worker.switch.toggle_light()
-
-        self.toggle_button.setEnabled(False)
 
     def append_output_text(self, new_text):
         self.output_txt_label.setText(new_text)
@@ -69,7 +48,7 @@ class SoPiUi(QtWidgets.QMainWindow):
 
     def closeEvent(self, event):
         self.logger.debug('Close event received; cleaning up')
-        self.event_worker.switch.stop_main_loop()
+        self.event_worker.stop()
         self.logger.debug('Stopped main loop')
         event.accept()
 
@@ -128,15 +107,16 @@ class SoPiUi(QtWidgets.QMainWindow):
         self.qr_button = QtWidgets.QPushButton()
         self.qr_button.setObjectName("qr_button")
         self.button_layout.addWidget(self.qr_button)
+        self.reboot_button = QtWidgets.QPushButton()
+        self.reboot_button.setObjectName("reboot_button")
+        self.button_layout.addWidget(self.reboot_button)
+
         self.discover_button = QtWidgets.QPushButton()
         self.discover_button.setObjectName("discover_button")
         self.button_layout.addWidget(self.discover_button)
         self.toggle_button = QtWidgets.QPushButton()
         self.toggle_button.setObjectName("toggle_button")
         self.button_layout.addWidget(self.toggle_button)
-        self.reboot_button = QtWidgets.QPushButton()
-        self.reboot_button.setObjectName("reboot_button")
-        self.button_layout.addWidget(self.reboot_button)
 
         self.qr_button.clicked.connect(self.toggle_qr_code)
         self.discover_button.clicked.connect(self.discover_light)
@@ -158,15 +138,7 @@ class SoPiUi(QtWidgets.QMainWindow):
         self.toggle_button.setText(_translate("MainWindow", "Toggle"))
         self.reboot_button.setText(_translate("MainWindow", "Reboot"))
 
-    def _state_update(self, device_state):
-        (discovered, state, error_state, error_message) = device_state
-        self.logger.debug('State update called...')
-        self.logger.debug('Current state: discovered {}, state {} error_state {} error_message {}'.format(discovered, state, error_state, error_message))
-        if error_state:
-            self.logger.error('Error flag set')
-            error_text = '<font color="red">{}</font>'.format(error_message.decode('ascii'))
-            self.append_output_text(error_text)
-        if not discovered:
-            return
-        self.toggle_button.setEnabled(True)
-        self.img_label.set_img(self._on_img if state else self._off_img)
+    # Should be overridden by inheriting classes
+    def _state_update_ui(self, device_state):
+        print('Super class state update')
+        pass
