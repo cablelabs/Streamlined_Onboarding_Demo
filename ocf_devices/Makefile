@@ -17,10 +17,10 @@ SO_DPP=1
 # Python build items
 BUILD_DIRS=build dist so_lightswitch.egg-info
 
-all: slined_onboarding/resources/libsoswitch.so
+all: slined_onboarding/resources/libso.so
 
 .PHONY: dist
-dist: slined_onboarding/resources/libsoswitch.so
+dist: slined_onboarding/resources/libso.so
 	python -m build
 
 $(LITE_LIBS):
@@ -30,7 +30,7 @@ slined_onboarding/lightswitch/soswitch.o: slined_onboarding/lightswitch/soswitch
 	@$(CC) -c -o $@ $^ -DOC_CLIENT $(CFLAGS) $(LITE_INCLUDES) $(LIBS)
 	@echo $(CC) $@
 
-slined_onboarding/resources/libsoswitch.so: slined_onboarding/lightswitch/soswitch.o $(CLIENT_LIB)
+slined_onboarding/resources/libso.so: slined_onboarding/lightswitch/soswitch.o $(CLIENT_LIB)
 	@$(CC) -shared -o $@ $^ -DOC_CLIENT $(CFLAGS) $(LITE_INCLUDES) $(LIBS)
 	@echo $(CC) $@
 
@@ -40,7 +40,7 @@ lightswitch: slined_onboarding/lightswitch/lightswitch.c $(CLIENT_LIB)
 	@echo $(CC) $@
 
 clean:
-	rm -rf lightswitch lightswitch_creds slined_onboarding/lightswitch/soswitch.o slined_onboarding/resources/libsoswitch.so
+	rm -rf lightswitch lightswitch_creds slined_onboarding/lightswitch/soswitch.o slined_onboarding/resources/libso.so
 	rm -rf $(BUILD_DIRS)
 
 .PHONY: clean-lite
