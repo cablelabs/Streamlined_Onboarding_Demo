@@ -4,7 +4,7 @@ ocf_devices/.env
 ocf_devices/lightswitch/build
 ocf_devices/lightswitch/dist/*
 ocf_devices/lightswitch/so_lightswitch.egg-info
-ocf_devices/lightswitch/lightswitch
+ocf_devices/lightswitch
 ocf_devices/lightswitch/lightswitch_creds
 ocf_devices/**/*.so
 ocf_devices/**/*.o
