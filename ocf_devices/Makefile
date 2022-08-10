@@ -41,7 +41,7 @@ slined_onboarding/resources/libso.so: obj/soswitch.o obj/socommon.o $(CLIENT_LIB
 	@$(CC) -shared -o $@ $^ -DOC_CLIENT $(CFLAGS) $(LITE_INCLUDES) $(LIBS)
 	@echo $(CC) $@
 
-lightswitch: slined_onboarding/lightswitch/lightswitch.c $(CLIENT_LIB)
+lightswitch: src/lightswitch.c $(CLIENT_LIB)
 	@mkdir -p $@_creds
 	@$(CC) -o $@ $^ $(CLIENT_LIB) -DOC_CLIENT $(CFLAGS) $(LITE_INCLUDES) $(LIBS)
 	@echo $(CC) $@
