@@ -42,7 +42,7 @@ class LampWorker(QObject):
     def __init__(self):
         super().__init__()
         self.logger = logging.getLogger(__name__)
-        self.ocf_device = SoLamp(os.environ.get('WPA_CTRL_IFACE'), os.environ.get('SO_LIGHTSWITCH_CREDS'), self._state_update, os.environ.get('SO_PERSIST_CREDS'))
+        self.ocf_device = SoLamp(os.environ.get('WPA_CTRL_IFACE'), os.environ.get('SO_LAMP_CREDS'), self._state_update, os.environ.get('SO_PERSIST_CREDS'))
 
     def run(self):
         self.logger.debug('Thread run called')

@@ -19,7 +19,7 @@ class SwitchUi(SoPiUi):
         if self.qr_code_shown:
             self.toggle_qr_code()
 
-        if not self.event_worker.device.light_discovered:
+        if not self.event_worker.ocf_device.light_discovered:
             self.logger.error('Light not discovered!')
             self.append_output_text('Light not discovered')
         else:
