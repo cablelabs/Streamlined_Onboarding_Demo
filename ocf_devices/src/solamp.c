@@ -14,6 +14,7 @@ void
 set_state(bool state)
 {
   my_state.state = state;
+  external_cb(&my_state);
 }
 
 static int
@@ -99,6 +100,7 @@ so_lamp_init(char *storage_path, char *so_ctrl_iface, void (*cb)(switch_state *s
 
   static const oc_handler_t handler = { .init = app_init,
     .signal_event_loop = signal_event_loop,
+    .requests_entry = NULL,
     .register_resources = register_resources };
 
   OC_DBG("Calling storage config with path %s\n", storage_path);

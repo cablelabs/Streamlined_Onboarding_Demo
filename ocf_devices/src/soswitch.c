@@ -134,7 +134,8 @@ so_switch_init(char *storage_path, char *so_ctrl_iface, void (*cb)(switch_state 
 
   static const oc_handler_t handler = { .init = app_init,
     .signal_event_loop = signal_event_loop,
-    .requests_entry = issue_requests };
+    .requests_entry = issue_requests,
+    .register_resources = NULL };
 
   OC_DBG("Calling storage config with path %s\n", storage_path);
   oc_storage_config(storage_path);

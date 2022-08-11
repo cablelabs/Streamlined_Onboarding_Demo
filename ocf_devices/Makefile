@@ -31,15 +31,15 @@ obj:
 	@mkdir obj
 
 obj/socommon.o: src/socommon.c obj
-	@$(CC) -c -o $@ $< -DOC_CLIENT $(CFLAGS) $(LITE_INCLUDES) $(LIBS)
+	@$(CC) -c -o $@ $< -DOC_CLIENT  -DOC_SERVER $(CFLAGS) $(LITE_INCLUDES) $(LIBS)
 	@echo $(CC) $@
 
 obj/soswitch.o: src/soswitch.c obj
-	@$(CC) -c -o $@ $< -DOC_CLIENT $(CFLAGS) $(LITE_INCLUDES) $(LIBS)
+	@$(CC) -c -o $@ $< -DOC_CLIENT -DOC_SERVER $(CFLAGS) $(LITE_INCLUDES) $(LIBS)
 	@echo $(CC) $@
 
 obj/solamp.o: src/solamp.c obj
-	@$(CC) -c -o $@ $< -DOC_SERVER $(CFLAGS) $(LITE_INCLUDES) $(LIBS)
+	@$(CC) -c -o $@ $< -DOC_CLIENT -DOC_SERVER $(CFLAGS) $(LITE_INCLUDES) $(LIBS)
 	@echo $(CC) $@
 
 slined_onboarding/resources/libso.so: obj/soswitch.o obj/solamp.o obj/socommon.o $(CLIENT_SERVER_LIB)
