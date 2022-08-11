@@ -12,7 +12,7 @@ class SoSwitch(SoDevice):
     def main_event_loop(self):
         self.logger.debug('Invoking main IoTivity-Lite event loop')
         self.device.so_switch_init(self._creds_dir.encode('utf8'), self._wpa_ctrl_iface.encode('utf8'), self._state_cb)
-        self.device.so_switch_main_loop()
+        self.device.so_main_loop()
         self.logger.debug('Main event loop finished')
 
     def discover_light(self):

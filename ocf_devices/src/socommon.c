@@ -37,7 +37,7 @@ handle_signal(int signal)
 }
 
 int
-so_switch_main_loop(void)
+so_main_loop(void)
 {
   oc_clock_time_t next_event;
   while (quit != 1) {

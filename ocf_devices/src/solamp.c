@@ -10,6 +10,12 @@
 static switch_state my_state = { .state = false, .discovered = false,
   .error_state = false, .error_message = NULL};
 
+void
+set_state(bool state)
+{
+  my_state.state = state;
+}
+
 static int
 app_init(void)
 {
