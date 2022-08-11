@@ -18,6 +18,7 @@ extern pthread_cond_t cv;
 extern struct timespec ts;
 extern external_cb_t external_cb;
 
+void handle_signal(int signal);
 void signal_event_loop(void);
 void set_external_cb(external_cb_t new_cb);
 int so_main_loop(void);
