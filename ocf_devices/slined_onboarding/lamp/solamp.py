@@ -16,5 +16,5 @@ class SoLamp(SoDevice):
         self.logger.debug('Main event loop finished')
 
     def toggle_lamp(self):
-        self.light_state = !self.light_state
+        self.light_state = not self.light_state
         self.device.set_state(self.light_state)
