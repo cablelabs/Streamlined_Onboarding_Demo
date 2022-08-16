@@ -117,6 +117,7 @@ so_lamp_init(char *storage_path, char *so_ctrl_iface, void (*cb)(switch_state *s
       OC_ERR("Failed to provide streamlined onboarding information to wpa_supplicant");
     }
   }
+  external_cb(&my_state);
   return 0;
 }
 
