@@ -38,7 +38,7 @@ post_light(oc_request_t *request, oc_interface_mask_t iface_mask, void *user_dat
     switch (rep->type) {
     case OC_REP_BOOL:
       my_state.state = rep->value.boolean;
-      OC_DBG("value: %d\n", state);
+      OC_DBG("value: %d\n", my_state.state);
       break;
     default:
       oc_send_response(request, OC_STATUS_BAD_REQUEST);

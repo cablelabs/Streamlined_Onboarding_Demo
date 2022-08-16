@@ -101,7 +101,7 @@ discovery_cb(const char *anchor, const char *uri, oc_string_array_t types,
       strncpy(a_light, uri, uri_len);
       a_light[uri_len] = '\0';
 
-      OC_DBG("Resource %s hosted at endpoints:\n", a_light);
+      OC_DBG("Resource %s discovered\n", a_light);
       my_state.discovered = true;
       oc_do_get(a_light, light_server, NULL, &get_light, LOW_QOS, NULL);
       return OC_STOP_DISCOVERY;
