@@ -3,7 +3,7 @@ import os
 import sys
 from dotenv import load_dotenv
 from PyQt5 import QtWidgets
-from slined_onboarding.common import SoGpioContext
+from slined_onboarding.common import so_gpio
 from slined_onboarding.lightswitch import SwitchUi
 
 def switch_main():
@@ -19,14 +19,14 @@ def switch_main():
     logger.debug('Starting the GUI')
     app = QtWidgets.QApplication(sys.argv)
     window = SwitchUi(iface_name)
-    gpio_context = SoGpioContext()
-    gpio_context.set_button(17, lambda x: window.toggle_qr_code())
-    gpio_context.set_button(22, lambda x: window.discover_light())
-    gpio_context.set_button(23, lambda x: window.toggle_switch())
+    so_gpio.gpio_setup()
+    so_gpio.set_button(17, lambda x: window.toggle_qr_code())
+    so_gpio.set_button(22, lambda x: window.discover_light())
+    so_gpio.set_button(23, lambda x: window.toggle_switch())
     if os.environ.get('ENV') == 'dev':
-        gpio_context.set_button(27, lambda x: window.close())
+        so_gpio.set_button(27, lambda x: window.close())
         window.show()
     else:
-        gpio_context.set_button(27, lambda x: os.system('sudo reboot'))
+        so_gpio.set_button(27, lambda x: os.system('sudo reboot'))
         window.showFullScreen()
     sys.exit(app.exec_())
