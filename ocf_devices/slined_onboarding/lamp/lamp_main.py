@@ -3,9 +3,10 @@ import os
 import sys
 from dotenv import load_dotenv
 from PyQt5 import QtWidgets
-from slined_onboarding import gui
+from slined_onboarding.common import so_gpio
+from slined_onboarding.lamp import LampUi
 
-def gui_main():
+def lamp_main():
     logging.basicConfig(format='%(levelname)s [%(name)s]: %(message)s', level=logging.DEBUG)
     logger = logging.getLogger(__name__)
     logger.debug('Current directory is {}'.format(os.getcwd()))
@@ -17,15 +18,14 @@ def gui_main():
         sys.exit(1)
     logger.debug('Starting the GUI')
     app = QtWidgets.QApplication(sys.argv)
-    window = gui.SoPiUi(iface_name)
-    gpio_context = gui.SoGpioContext()
-    gpio_context.set_button(17, lambda x: window.toggle_qr_code())
-    gpio_context.set_button(22, lambda x: window.discover_light())
-    gpio_context.set_button(23, lambda x: window.toggle_switch())
+    window = LampUi(iface_name)
+    so_gpio.gpio_setup()
+    so_gpio.set_button(17, lambda x: window.toggle_qr_code())
+    so_gpio.set_button(23, lambda x: window.toggle_lamp())
     if os.environ.get('ENV') == 'dev':
-        gpio_context.set_button(27, lambda x: window.close())
+        so_gpio.set_button(27, lambda x: window.close())
         window.show()
     else:
-        gpio_context.set_button(27, lambda x: os.system('sudo reboot'))
+        so_gpio.set_button(27, lambda x: os.system('sudo reboot'))
         window.showFullScreen()
     sys.exit(app.exec_())
