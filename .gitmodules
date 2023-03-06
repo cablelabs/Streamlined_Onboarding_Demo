@@ -1,7 +1,7 @@
 [submodule "deps/SO_hostap"]
 	path = deps/SO_hostap
-	url = git@github.com:cablelabs/SO_hostap.git
+	url = https://github.com/cablelabs/SO_hostap.git
 [submodule "deps/SO_IoTivity-Lite"]
 	path = deps/SO_IoTivity-Lite
-	url = git@github.com:cablelabs/SO_IoTivity-Lite.git
+	url = https://github.com/cablelabs/SO_IoTivity-Lite.git
 	ignore = dirty
