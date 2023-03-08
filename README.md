@@ -42,6 +42,11 @@ general steps are as follows:
 5. When the client device responds to discovery, the OBT onboards it, leveraging
    the simple secret provided over the network-layer onboarding.
 
+The diagram above displays two client devices, a lamp and a light switch. Once
+both client devices are onboarded through this method, a final step of
+provisioning access between the two so that the switch can operate on the lamp
+is performed through the OBT.
+
 ## Inventory of Components
 
 This implementation of Streamlined Onboarding is made up of a number of
@@ -59,7 +64,12 @@ specification (WFA). The key roles that are used in this implementation are as
 follows:
 
 * OCF Onboarding tool (OBT): OCF domain root of trust; responsible for
-  onboarding, provisioning, and configuring OCF Devices.
+  onboarding, provisioning, and configuring OCF Devices. For this demo, one of
+  two options exist for the OBT:
+  * The standard CLI-based OBT, buildable from within
+    `deps/SO_IoTivity-Lite/port/linux`
+  * The Web-based OBT, available on the `obt-py` branch of
+    `deps/SO_IoTivity-Lite`
 * DPP Configurator: Wi-Fi Easy Connect point of trust; responsible for
   communicating with Wi-Fi devices and associating them with the Wi-Fi network.
 * DPP Diplomat: OCF Resource that is responsible for taking information from the
@@ -82,8 +92,8 @@ These devices can be thought of in the following way:
   * "Displays" a QR code that can be used to start the streamlined onboarding
     process
 
-For the sake of simplicity, this README assumes that these are the only two
-devices in use, and refers to them accordingly below.
+For the sake of simplicity, this README generally assumes that these are the
+only two devices in use, and refers to them accordingly below.
 
 ### Software Components
 
