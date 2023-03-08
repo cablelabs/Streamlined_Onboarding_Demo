@@ -127,9 +127,8 @@ The software components of this demo include the following:
     "installed" in a location like `/usr/local/etc/streamlined_onboarding`;
     these configurations provide the basic settings required in HostAP for DPP
     to function.
-  * An IoTivity-Lite-based example OCF Device with a graphical and command line
-    interface, written in Python, found in the `ocf_devices/lightswitch`
-    directory.
+  * IoTivity-Lite-based example OCF Devices with a graphical interface, written
+    in Python, found in the `ocf_devices` directory.
 
 #### Note on Web-Based OBT
 
