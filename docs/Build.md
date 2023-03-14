@@ -11,6 +11,8 @@
   * [`wpa_supplicant` README](https://github.com/cablelabs/SO_hostap/blob/ocf_streamlined_onboarding/wpa_supplicant/README)
 * `hostapd` and `wpa_supplicant` must be built and configured to run on the AP
   and STA devices, respectively.
+  * Note that the NetReach version of the AP also includes support for
+    streamlined onboarding.
 * IoTivity-Lite Devices, including the OBT, Diplomat, and simpleclient (light
   resource) can be built within the `deps/SO_IoTivity-Lite/port/linux`
   directory with `make`
@@ -32,26 +34,14 @@ device running on a Raspberry Pi, and interacting with it via the web-based OBT.
 
 This involves the following high-level steps:
 
-* Ensuring the network interfaces are configured for the STA & AP devices
 * Building (and optionally installing) the Wi-Fi components
   * `wpa_supplicant`
     * Additional `libwpa_client` library
   * `hostapd`
-* Starting the Wi-Fi components with correct configurations
 * Building the IoTivity-Lite components
   * OBT
   * Diplomat
   * Lightswitch
-* Starting the AP OCF components
-  * OBT (web-based)
-  * Diplomat
-* Initially provisioning the OCF domain
-  * Onboarding the Diplomat
-  * Subscribing to updates from the Diplomat
-* Starting the lightswitch Device
-* Executing the demo
-  * Displaying a QR code on the lightswitch
-  * Scanning the QR code with the web-based OBT (from a smart phone)
 
 Not all of these steps are described in full detail, as components of this demo
 are still fragmented and spread across multiple repositories.
@@ -128,7 +118,7 @@ CONFIG_OCF_ONBOARDING=y
   * `wpa_cli` is a command line interface to interact with a running instance of
     `wpa_supplicant`, typically via a socket. This program can be used to
     execute DPP, examples of which can be seen in the `run_sta.sh` script
-    [here](./scripts/hostap/run_sta.sh)
+    [here](../scripts/hostap/run_sta.sh)
   * `libwpa_client.so` is a library that the streamlined onboarding-enabled OCF
     Devices link during their compilation; it provides the necessary commands to
     interact with `wpa_supplicant` through socket communications. Once this
@@ -196,22 +186,18 @@ make CROSS=1 <targets>
   default for your Linux distribution; these typically need to be installed via
   `apt` and with the architecture `armhf` specified
 
-
 ## Building the OCF Components
 
 * Generally, when building the IoTivity-Lite tools, the Makefile is located in
   `deps/SO_IoTivity-Lite/port/linux`
-  * The remainder of this section assumes the use of `make` from within this
-    directory
 * From within this directory, the OCF examples can be built with `make <target>`
 
 ### Onboarding Tool (OBT)
 
 * The command-line based OBT can be built in the
-  `deps/SO_IoTivity-Lite/port/linux` directory with a `make SO_DPP=1 onboarding_tool`
-  * Note the required environment variable `SO_DPP`, which indicates to
-    different macros and definitions that code specific to streamlined
-    onboarding
+  `deps/SO_IoTivity-Lite/port/linux` directory with `make SO_DPP=1 onboarding_tool`
+  * Note the required environment variable `SO_DPP`, which indicates to include
+    different macros and code definitions specific to streamlined onboarding
 * Refer to the documentation on the IoTivity-Lite branch `obt-py` for
   information on building and running the web-based OBT
 
@@ -219,23 +205,22 @@ make CROSS=1 <targets>
 
 * The diplomat can be built with `make SO_DPP=1 dpp_diplomat`
 
-### Lightswitch
+### Client Pi Devices
 
-* The lightswitch device is defined in this repository, and its source code is
-  located in the directory `ocf_devices/lightswitch`
-* The Makefile in that directory can be used to build the necessary library that
-  Python interacts with when running the lightswitch device
-  * This library can be built with a simple `make` (the library is the default
-    target)
-* Once the lightswitch library is built, the lightswitch application can be run
-  in two ways:
-  * A command-line interface mode that can be run with the command `python -m
-    slined_onboarding.cli.switch_cli`
-  * A graphical interface (built in QT) that can be invoked with the command
-    `python -m slined_onboarding.gui`
-* Note that the lightswitch application relies on the `dotenv` module to read
-  environment variables from a `.env` file
-  * A template file with all the necessary variables (as well as some defaults
-    that can be used) is available at `ocf_devices/lightswitch/dotenv_template`
-  * This file can be copied to `.env` and adjusted as necessary
-
+* The client (Wi-Fi station) OCF devices consist of Python-based QT5 GUIs with
+  underlying IoTivity-Lite stacks.
+  * One device represents a lamp.
+  * One device represents a lightswitch (lamp control).
+* On Raspberry Pi, the system-installed `python3-pyqt5` package should be
+  installed.
+  * On other platforms, this package or the `PyQt5` package via `pip` can be
+    installed.
+* The devices can be built & run from within the `ocf_devices` directory.
+  * This directory contains common and specific source for each device.
+* The Makefile in the `ocf_devices` directory can be used to build the
+  following:
+  * The `libso.so` library that Python interacts with when running the client
+    devices.
+  * A Python Wheel package for easy installation (Make target: `dist`).
+    * When installed, this package includes the `slined_onboarding` module, as
+      well as the `libso.so` library.
