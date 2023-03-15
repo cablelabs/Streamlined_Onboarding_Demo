@@ -224,3 +224,39 @@ make CROSS=1 <targets>
   * A Python Wheel package for easy installation (Make target: `dist`).
     * When installed, this package includes the `slined_onboarding` module, as
       well as the `libso.so` library.
+
+#### Client Module Distribution
+
+The `dist` target in the client devices `Makefile` described above creates a
+Python Wheel package containing the `slined_onboarding` module as well as the
+main routine scripts to invoke the lamp & lightswitch devices.
+
+This package (e.g., `so_demo-0.0.2-py3-none-any.whl`) can be installed via
+`pip`, for example: `pip install ./so_demo-0.0.2-py3-none-any.whl`.
+
+## Recommended Installation Paths
+
+When installing on a demo system (e.g., Raspberry Pis), the following components
+should be installed in the corresponding locations. Each table that follows
+corresponds to a device in the architecture.
+
+### AP Components
+
+| Component                | Installation Path                                   | Description                                                                                                 |
+|--------------------------|-----------------------------------------------------|-------------------------------------------------------------------------------------------------------------|
+| Onboarding Tool          | `/opt/streamlined_onboarding/onboarding_tool`       |                                                                                                             |
+| OBT credentials          | `/opt/streamlined_onboarding/onboarding_tool_creds` | Should exist if onboarding actions should persist across invocations (recommended).                         |
+| DPP Diplomat             | `/opt/streamlined_onboarding/dpp_diplomat`          |                                                                                                             |
+| DPP Diplomat credentials | `/opt/streamlined_onboarding/dpp_diplomat_creds`    | Should exist if onboarding actions should persist across invocations (recommended).                         |
+| DPP Diplomat service     | `/etc/systemd/system/diplomat.service`              | Used to activate the Diplomat via `systemd`.                                                                |
+| hostapd                  | `/usr/sbin/hostapd`                                 | Recommend backing up "original" binary & using symlink. Disregard if using the NetReach/Micronets variant.  |
+
+### Client Devices
+
+| Component                 | Installation Path                                           | Description                                                                                                |
+|---------------------------|-------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
+| wpa\_supplicant           | `/usr/sbin/wpa_supplicant`                                  | Recommend backing up "original" binary & using symlink.                                                    |
+| wpa\_cli                  | `/usr/sbin/wpa_cli`                                         | Recommend backing up "original" binary & using symlink.                                                    |
+| Python Clients            | (N/A)                                                       | Install Wheel package for `slined_onboarding` module via `pip`.                                            |
+| Python Client Environment | `/usr/local/etc/streamlined_onboarding/prod.env`            | Variables for runtime configuration. See [`dotenv_template`](../ocf_devices/dotenv_template) for template. |
+| Python Client Autostart   | `/home/pi/.config/autostart/so_(lamp\|lightswitch).desktop` | XDG Autostart file to enable automatically starting client on Raspberry Pi boot/login.                     |
