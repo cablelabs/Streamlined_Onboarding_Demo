@@ -124,9 +124,9 @@ The software components of this demo include the following:
   * Scripts that can be used to execute a basic run of DPP with `wpa_cli` and
     `hostapd_cli`, found in the `scripts/` directory.
   * Example configuration files for the HostAP components, which can be
-    "installed" in a location like `/usr/local/etc/streamlined_onboarding`;
-    these configurations provide the basic settings required in HostAP for DPP
-    to function.
+    installed in a location like `/etc/opt/streamlined_onboarding` or
+    `/usr/local/etc/streamlined_onboarding`; these configurations provide the
+    basic settings required in HostAP for DPP to function.
   * IoTivity-Lite-based example OCF Devices with a graphical interface, written
     in Python, found in the `ocf_devices` directory.
 

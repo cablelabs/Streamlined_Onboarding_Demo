@@ -22,8 +22,8 @@ WPA_CTRL_IFACE=/var/run/wpa_supplicant/wlan0
 # Path to credential directory for OCF Devices. Switch applications default to
 # ./lightswitch_creds
 # This directory should exist should provide write access.
-SO_LIGHTSWITCH_CREDS=/var/local/streamlined_onboarding/lightswitch_creds
-SO_LAMP_CREDS=/var/local/streamlined_onboarding/lamp_creds
+SO_LIGHTSWITCH_CREDS=/var/opt/streamlined_onboarding/lightswitch_creds
+SO_LAMP_CREDS=/var/opt/streamlined_onboarding/lamp_creds
 
 #--------------------------------#
 # Optional Development Variables |

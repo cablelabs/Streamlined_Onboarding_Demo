@@ -5,8 +5,8 @@ After=network.target
 
 [Service]
 Type=simple
-Environment=DAEMON_CONF=/usr/local/etc/streamlined_onboarding/so_hostapd.conf
-ExecStart=/usr/local/bin/hostapd $DAEMON_OPTS ${DAEMON_CONF}
+Environment=DAEMON_CONF=/etc/opt/streamlined_onboarding/so_hostapd.conf
+ExecStart=/opt/streamlined_onboarding/hostapd $DAEMON_OPTS ${DAEMON_CONF}
 
 [Install]
 WantedBy=multi-user.target

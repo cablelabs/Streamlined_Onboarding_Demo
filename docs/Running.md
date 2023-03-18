@@ -139,7 +139,7 @@ following steps:
   * This file can be copied to `.env` and adjusted as necessary
   * As documented in the [build instructions](./Build.md#recommended-installation-paths),
     this environment file should be copied to
-    `/usr/local/etc/streamlined_onboarding/prod.env` for a production system.
+    `/etc/opt/streamlined_onboarding/prod.env` for a production system.
 * Once the `libso.so` library is built, the client applications can be run by
   invoking the following (from within the `ocf_devices` directory):
   * To run the lamp device, use `python -m slined_onboarding.lamp`
@@ -153,7 +153,7 @@ Note that, when doing so, the environment variables in the [`dotenv_template`](.
 must be defined, so a full invocation may look like the following:
 
 ```sh
-SO_IFACE=wlan0 WPA_CTRL_IFACE=/var/run/wpa_supplicant/wlan0 SO_LIGHTSWITCH_CREDS=/var/local/streamlined_onboarding/lightswitch_creds SO_LAMP_CREDS=/var/local/streamlined_onboarding/lamp_creds python -m slined_onboarding.lamp
+SO_IFACE=wlan0 WPA_CTRL_IFACE=/var/run/wpa_supplicant/wlan0 SO_LIGHTSWITCH_CREDS=/var/opt/streamlined_onboarding/lightswitch_creds SO_LAMP_CREDS=/var/opt/streamlined_onboarding/lamp_creds python -m slined_onboarding.lamp
 ```
 
 Which can be further simplified to the following, when using a `.env` file:
@@ -162,7 +162,7 @@ Which can be further simplified to the following, when using a `.env` file:
 # Export variables for subsequent commands
 set -a
 # Read environment variables from .env file
-source /usr/local/etc/streamlined_onboarding/prod.env
+source /etc/opt/streamlined_onboarding/prod.env
 # Invoke application
 python -m slined_onboarding.lamp
 ```

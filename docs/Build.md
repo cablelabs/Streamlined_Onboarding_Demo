@@ -260,5 +260,5 @@ corresponds to a device in the architecture.
 | `libwpa_client.so`        | `/usr/local/lib/libwpa_client.so`                           | Library necessary for clients to interact with `wpa_supplicant`.                                           |
 | `wpa_ctrl.h`              | `/usr/local/include/wpa_ctrl.h`                             | Header for use with `libwpa_client.so` library (compile-time requirement).                                 |
 | Python Clients            | (N/A)                                                       | Install Wheel package for `slined_onboarding` module via `pip`.                                            |
-| Python Client Environment | `/usr/local/etc/streamlined_onboarding/prod.env`            | Variables for runtime configuration. See [`dotenv_template`](../ocf_devices/dotenv_template) for template. |
+| Python Client Environment | `/etc/opt/streamlined_onboarding/prod.env`                  | Variables for runtime configuration. See [`dotenv_template`](../ocf_devices/dotenv_template) for template. |
 | Python Client Autostart   | `/home/pi/.config/autostart/so_(lamp\|lightswitch).desktop` | XDG Autostart file to enable automatically starting client on Raspberry Pi boot/login.                     |
