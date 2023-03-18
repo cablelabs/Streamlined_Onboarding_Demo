@@ -1,0 +1,13 @@
+[Unit]
+Description=Streamlined Onboarding OCF Diplomat
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/streamlined_onboarding
+Environment=WPA_CTRL_IFACE=/var/run/hostapd/wlan0
+Environment=DHCP_NAMED_PIPE=/var/run/diplomat/leases
+ExecStart=/opt/streamlined_onboarding/dpp_diplomat
+
+[Install]
+WantedBy=multi-user.target
