@@ -47,7 +47,22 @@ On Raspberry Pis, `/sbin/wpa_supplicant` is invoked via the `dhcpcd` service;
 replacing the `wpa_supplicant` binary as recommended in the [build
 documentation](./Build.md#recommended-installation-paths) is sufficient for
 automatic invocation. The default `wpa_supplicant` configuration file is
-`/etc/wpa_supplicant/wpa_supplicant.conf`.
+`/etc/wpa_supplicant/wpa_supplicant.conf`. The recommended settings to include
+in the `wpa_supplicant.conf` file are as follows:
+
+```
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=0
+country=US
+pmf=2
+dpp_config_processing=2
+```
+
+Note that the `update_config=0` setting ensures that Wi-Fi network information
+does not persist across instances of `wpa_supplicant`. This is useful for
+repeatedly testing the demo, for which the Wi-Fi stack simply needs to be
+restarted (instead of needing to delete the `network` block from the
+configuration file each time).
 
 ## Starting the AP OCF Components
 
