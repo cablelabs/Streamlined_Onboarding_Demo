@@ -10,6 +10,9 @@
 * [`docs/Build.md`](./docs/Build.md): How to build demo components
 * [`docs/Running.md`](./docs/Running.md): How to run each component and execute
   the demo
+* [`docs/Raspberry_Pi_Deployment.md`](./docs/Raspberry_Pi_Deployment.md):
+  One-pager for deploying & running the streamlined onboarding demo on Raspberry
+  Pis.
 
 ## Overview
 
