@@ -11,10 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-CONFIG_DIR=/usr/local/etc/streamlined_onboarding
+CONFIG_DIR=/etc/opt/streamlined_onboarding
 TEMP_CONFIG=/tmp/so_hostapd.conf
 
-echo "Configuring hostapd options (these can be edited later in /usr/local/etc/streamlined_onboarding/hostapd.conf)"
+echo "Configuring hostapd options (these can be edited later in /etc/opt/streamlined_onboarding/hostapd.conf)"
 read -p "Enter the interface name that hostapd should be configured to use (e.g., wlan1): " IFACE
 read -p "Enter the SSID that hostapd should broadcast: " SSID
 read -p "Enter the passphrase that hostapd should use: " PASSPHRASE

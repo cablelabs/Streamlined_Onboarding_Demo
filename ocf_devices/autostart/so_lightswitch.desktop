@@ -1,4 +1,5 @@
 [Desktop Entry]
+Hidden=true
 Type=Application
 Name=SO Lightswitch
-Exec=/bin/bash -c 'set -a && . /usr/local/etc/streamlined_onboarding/prod.env && python -m slined_onboarding.lightswitch'
+Exec=/bin/bash -c 'set -a && . /etc/opt/streamlined_onboarding/prod.env && python -m slined_onboarding.lightswitch'
