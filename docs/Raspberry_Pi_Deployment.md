@@ -1,5 +1,7 @@
 # Streamlined Onboarding Demo Deployment for Raspberry Pi
 
+*Andy Dolan ([a.dolan@cablelabs.com](mailto:a.dolan@cablelabs.com))*
+
 This document provides a brief summary of how to deploy the streamlined
 onboarding demo on a set of Raspberry Pis. This guide assumes the use of the
 NetReach AP components (`hostapd`, `dnsmasq` with lease notification script).
@@ -263,7 +265,7 @@ depicted below:
 
 ![UI displaying DPP QR code (blurred)](./images/Lamp_QR.png)
 
-![UI displaying DPP QR code (blurred) on physical pi](./images/Pi_Example_2.png)
+![UI displaying DPP QR code (blurred) on physical pi](./images/Pi_Example_2.jpg)
 
 This code can be scanned with a camera to retrieve the DPP URI. Alternatively,
 if invoking the client applications from the command line, the URI is also
@@ -307,7 +309,7 @@ streamlined onboarding, use the following steps:
 Once the device has been created, the device details page for the device should
 be displayed, an example of which appears below:
 
-![Exmaple device after being added through the NetReach controller's
+![Example device after being added through the NetReach controller's
 interface](./images/NRC_nccoe_Device_details.png)
 
 #### Confirming Onboarding
