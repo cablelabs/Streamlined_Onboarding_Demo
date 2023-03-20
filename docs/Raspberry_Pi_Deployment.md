@@ -34,7 +34,9 @@ interface, which this guide will assume is referred to as `wlan0`.
 ## Component Installation
 
 See the [build documentation](https://github.com/cablelabs/Streamlined_Onboarding_Demo/blob/master/docs/Build.md)
-for a summary of installation paths of each component.
+for a summary of installation paths of each component. This section assumes that
+all binaries, configurations, and templates have been downloaded from the
+release page.
 
 ### Access Point
 
@@ -61,9 +63,10 @@ The following snippet performs all of the steps described above (assumes use of
 `sudo` and that all necessary files are in current working directory):
 
 ```sh
+#!/bin/bash
 export INSTALL_DEST=/opt/streamlined_onboarding
-sudo mkdir -p $INSTALL_PREFIX/{onboarding_tool,dpp_diplomat}_creds
-sudo install -t $INSTALL_PREFIX onboarding_tool dpp_diplomat
+sudo mkdir -p $INSTALL_DEST/{onboarding_tool,dpp_diplomat}_creds
+sudo install -t $INSTALL_DEST onboarding_tool dpp_diplomat
 sudo install -m 644 diplomat.service /etc/systemd/system
 sudo systemctl daemon-reload
 sudo systemctl enable diplomat.service
@@ -139,3 +142,260 @@ install -m 644 -t $HOME/.config/autostart {lightswitch,lamp}.desktop
  # Cleanup
 unset -v INSTALL_DEST CONFIG_DEST
 ```
+
+## Starting Components
+
+Refer to the [running documentation](https://github.com/cablelabs/Streamlined_Onboarding_Demo/blob/master/docs/Running.md)
+for more detail on manually starting each component of the demo.
+
+### Access Point
+
+Use the following steps to start the components on the AP:
+
+1. Start the Wi-Fi & network components
+   * Refer to the [NetReach documentation]()
+     for details on how to start (or restart) the Wi-Fi and other network
+     components.
+2. Start (or restart) the Diplomat:
+   * Restart the DPP Diplomat service with `sudo systemctl restart
+     diplomat.service`
+3. Start the onboarding tool
+   * Start the OBT by executing the `onboarding_tool` binary from within the
+     `/opt/streamlined_onboarding` directory.
+   * The main OBT menu should be displayed and prompt for you to select an
+     option.
+
+### Client Devices
+
+Use the following steps to start the client devices. Note that, if the Python
+clients are configured to start on device boot (using the `.desktop` files),
+ensure that they are stopped/killed before restarting.
+
+1. Update `/etc/wpa_supplicant/wpa_supplicant.conf` to contain the following:
+   ```
+   ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+   update_config=0
+   country=US
+   pmf=2
+   dpp_config_processing=2
+   ```
+2. Restart `dhcpcd` using `sudo systemctl restart dhcpcd.service`
+3. Optionally create the OCF credentials directories to persist onboarding &
+   provisioning of the client devices across runs:
+   * `sudo mkdir -p /var/opt/streamlined_onboarding/{lamp,lightswitch}_creds`
+4. Verify that the configuration variables in `/etc/opt/streamlined_onboarding/prod.env`
+   are correct.
+5. Use the following commands to start the lamp & light switch client
+   applications (on separate Pis):
+   * Note that, if running over SSH or with X forwarding, you may need to set
+     the `DISPLAY` variable ahead of the following invocations (e.g.,
+     `DISPLAY=:0` to launch on the local Adafruit display.
+   * To start the lamp device:
+     ```sh
+     set -a
+     source /etc/opt/streamlined_onboarding/prod.env
+     python -m slined_onboarding.lamp
+     ```
+   * To start the light switch device:
+     ```sh
+     set -a
+     source /etc/opt/streamlined_onboarding/prod.env
+     python -m slined_onboarding.lightswitch
+     ```
+
+## Initial Provisioning of Diplomat
+
+A final one-time step that is required is using the OBT to onboard & provision
+the Diplomat. See the [running documentation](https://github.com/cablelabs/Streamlined_Onboarding_Demo/blob/master/docs/Running.md#initial-provisioning-of-diplomat)
+for more details. The following steps can be executed using the OBT to perform
+initial provisioning of the DPP Diplomat:
+
+1. Discover unowned devices (option `1`)
+2. Onboard with Just Works (option `8`)
+   * Select the `DPP Diplomat` for the device to onboard
+3. Provision ACE2 (option `13`)
+   * Device selection: `DPP Diplomat`
+   * Subject: `(OBT)`
+   * Number of resources in this ACE: `1`
+   * Have resource href: `1 (Yes)`
+   * Enter resource href: `/diplomat` (include forward slash)
+   * Permissions: `1` (Yes) for each of `CREATE`, `RETRIEVE`, `UPDATE`, `DELETE`,
+     `NOTIFY`
+4. Observe Diplomat (option `41`)
+
+The correct output at the end of these steps should look similar to the
+following:
+
+```
+Resource /diplomat hosted at endpoints:
+coaps://[<ipv6address>]:<port>
+Sent OBSERVE request
+Observe Diplomat:
+
+```
+
+## Executing The Demo
+
+This section assumes the use of the NetReach cloud-based controller for starting
+network onboarding. Application-level onboarding follows network-level
+onboarding.
+
+It is recommended that all of the following steps be performed sequentially on
+each device individually - that is, entirely onboard one client device, then the
+other.
+
+### Display DPP URI (QR Code) on Client Device
+
+The interfaces of the lamp and lightswitch devices are pictured below:
+
+![Lamp interface overview](./images/Lamp_Start.png)
+
+![Light Switch interface overview](./images/Lightswitch_Start.png)
+
+On the physical Pis, the 4 QT buttons displayed in the software correspond to
+the 4 physical buttons of the PiTFT hat (pictured below in a case with button
+covers):
+
+![Pi with PiTFT and case displaying UI](./images/Pi_Example_1.jpg)
+
+The first (top) button can be used to display the QR code on the interface, as
+depicted below:
+
+![UI displaying DPP QR code (blurred)](./images/Lamp_QR.png)
+
+![UI displaying DPP QR code (blurred) on physical pi](./images/Pi_Example_2.png)
+
+This code can be scanned with a camera to retrieve the DPP URI. Alternatively,
+if invoking the client applications from the command line, the URI is also
+printed to the console, as seen below:
+
+![DPP URI printed to console](./images/Console_DPP_URI.png)
+
+Either way, this URI is then provided to the NetReach controller to start
+network onboarding, described in the next section.
+
+### Initiate Network Onboarding
+
+See the [NetReach documentation]() for more details on creating & provisioning
+network credentials to devices. This section assumes that all initial
+provisioning of the access point through the NetReach controller is complete at
+this point.
+
+To begin network onboarding & subsequent application-level onboarding through
+streamlined onboarding, use the following steps:
+
+1. Select "create" at the top of the "Devices" tab of the NetReach controller
+   (shown below).
+
+![NetReach controller devices page](./images/NRC_nccoe_Devices_overview.png)
+
+2. Enter the device information into the create device form:
+   * Device name
+   * Trust domain
+   * Device type
+   * **Bootstrapping info: The DPP URI fetched in the prvious section**
+3. Add a network credential for the device:
+   * Type: WPA2\_PASSPHRASE
+
+   The gif below summarizes each of the fields to populate in the device
+   creation form:
+
+   ![](./images/NRC_nccoe_Device_create.gif)
+
+4. Submit the form by clicking "create new device".
+
+Once the device has been created, the device details page for the device should
+be displayed, an example of which appears below:
+
+![Exmaple device after being added through the NetReach controller's
+interface](./images/NRC_nccoe_Device_details.png)
+
+#### Confirming Onboarding
+
+Once the device creation form has been submitted, network onboarding should take
+place. The following is expected to take place:
+
+* DPP executes between the AP and the client device, as part of which
+  streamlined onboarding information is shared.
+* The DPP configurator (IE, `hostapd`) on the access point provides the
+  `dpp_diplomat` this streamlined onboarding information
+* The `dpp_diplomat` waits for `dnsmasq` to add data to the leases notification
+  named pipe
+  * This pipe is identified by the `DHCP_NAMED_PIPE` variable set when starting
+    the diplomat (or defined in its service file).
+* Once the client is assigned an IP and the DHCP pipe is written to, the
+  diplomat sends an OCF OBSERVE response to the OBT, which is still polling for
+  streamlined onboarding information.
+* Upon receiving this information the `onboarding_tool` issues a request to
+  automatically onboard the client.
+
+If each component executes correctly, the following should be observed:
+
+* The client device has associated to the AP's network and has been assigned an
+  IP address that corresponds to that displayed in the NetReach controller's
+  device details page.
+* The `onboarding_tool` should have displayed messages indicating that:
+  * It had received an OBSERVE response from the diplomat
+  * It had attempted to onboard a device identified by a UUID
+  * The onboarding had completed successfully
+* The client device should now be "owned" by the `onboarding_tool`
+  * This can be verified in the `onboarding_tool` with option `4` (discover
+    owned devices), which should output endpoints for 2 devices (the diplomat
+    and the newly onboarded client device).
+
+### (Optional) Device Interaction
+
+Once both OCF client devices have been onboarded, the OBT can be used to
+initially provision them so that the light switch can act on the lamp using OCF
+operations. The following steps can be used to achieve this:
+
+1. In the `onboarding_tool`, rediscover unowned devices (option `4`)
+2. Provision pairwise credential (option `12`)
+   * Device 1: `SO Light Switch`
+   * Device 2: `SO Lamp`
+3. Provision ACE2 (option `13`)
+   * Object: `SO Lamp`
+   * Subject: `SO Light Switch`
+   * Number of resources in this ACE: `1`
+   * Have resource href: `1 (Yes)`
+   * Enter resource href: `/a/light` (include forward slashes)
+   * Permissions: `1` (Yes) for each of `CREATE`, `RETRIEVE`, `UPDATE`, `DELETE`,
+     `NOTIFY`
+4. On light switch device, select the "discovery light" button
+   * If the lamp is discovered, the "toggle" button on the light switch device
+     should become active.
+5. On the light switch device, select the "toggle" button to toggle the lamp.
+   * If the device was provisioned properly, the light images on both devices
+     should actuate.
+
+## Troubleshooting
+
+Some useful logs/areas to observe during the execution of the demo include the
+following:
+
+* Output of the diplomat:
+  * Console if invoked manually
+  * `sudo journalctl -u diplomat.service -f` if using `systemd` service
+* The main `micronets-gw` log: `/opt/micronets-gw/micronets-gw.log`
+
+### Resetting Demo Components
+
+Refer to the [NetReach documentation]() for details on how to reset/restart the
+AP Wi-Fi/network components.
+
+To reset the other components of the demo, the following steps should be used:
+
+1. Stop all OCF-related binaries on AP & client devices:
+   * `onboarding_tool` (exit gracefully with option `99`)
+   * `dpp_diplomat` (stop service with `sudo systemctl stop diplomat.service`)
+   * Python client applications: kill main Python process (e.g., `python -m
+     slined_onboarding.(lamp|lightswitch)`
+2. Remove contents of all credentials directories to reset provisioning steps:
+   ```sh
+   #!/bin/bash
+   sudo rm /opt/streamlined_onboarding/{onboarding_tool,dpp_diplomat}_creds/*
+   sudo rm /var/opt/streamlined_onboarding/{lightswitch,lamp}_creds/*
+   ```
+3. Restart `dhcpcd` via `sudo systemctl restart dhcpcd.service`
+4. Restart the OCF components stopped in step 1 (see instructions
+   [above](#starting-components)).
