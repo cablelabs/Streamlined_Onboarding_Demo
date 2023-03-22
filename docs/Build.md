@@ -242,14 +242,14 @@ corresponds to a device in the architecture.
 
 ### AP Components
 
-| Component                | Installation Path                                   | Description                                                                                                 |
-|--------------------------|-----------------------------------------------------|-------------------------------------------------------------------------------------------------------------|
-| Onboarding Tool          | `/opt/streamlined_onboarding/onboarding_tool`       |                                                                                                             |
-| OBT credentials          | `/opt/streamlined_onboarding/onboarding_tool_creds` | Should exist if onboarding actions should persist across invocations (recommended).                         |
-| DPP Diplomat             | `/opt/streamlined_onboarding/dpp_diplomat`          |                                                                                                             |
-| DPP Diplomat credentials | `/opt/streamlined_onboarding/dpp_diplomat_creds`    | Should exist if onboarding actions should persist across invocations (recommended).                         |
-| DPP Diplomat service     | `/etc/systemd/system/diplomat.service`              | Used to activate the Diplomat via `systemd`.                                                                |
-| hostapd                  | `/usr/sbin/hostapd`                                 | Recommend backing up "original" binary & using symlink. Disregard if using the NetReach/Micronets variant.  |
+| Component                | Installation Path                                       | Description                                                                                                 |
+|--------------------------|---------------------------------------------------------|-------------------------------------------------------------------------------------------------------------|
+| Onboarding Tool          | `/opt/streamlined_onboarding/bin/onboarding_tool`       |                                                                                                             |
+| OBT credentials          | `/opt/streamlined_onboarding/lib/onboarding_tool_creds` | Should exist if onboarding actions should persist across invocations (recommended).                         |
+| DPP Diplomat             | `/opt/streamlined_onboarding/bin/dpp_diplomat`          |                                                                                                             |
+| DPP Diplomat credentials | `/opt/streamlined_onboarding/lib/dpp_diplomat_creds`    | Should exist if onboarding actions should persist across invocations (recommended).                         |
+| DPP Diplomat service     | `/etc/systemd/system/diplomat.service`                  | Used to activate the Diplomat via `systemd`.                                                                |
+| hostapd                  | `/usr/sbin/hostapd`                                     | Recommend backing up "original" binary & using symlink. Disregard if using the NetReach/Micronets variant.  |
 
 ### Client Devices
 
