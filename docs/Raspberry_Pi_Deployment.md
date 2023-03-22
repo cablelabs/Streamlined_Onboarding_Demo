@@ -5,13 +5,13 @@
 This document provides a brief summary of how to deploy the streamlined
 onboarding demo on a set of Raspberry Pis. This guide assumes the use of the
 NetReach AP components (`hostapd`, `dnsmasq` with lease notification script).
-Refer to the [NetReach release documentation](https://github.com/cablelabs/micronets-gw/releases/tag/v1.2.1-nccoe)
+Refer to the [NetReach AP documentation](./Ref-AP-Setup-for-NCCoE/nccoe-ap-setup.md)
 for details on installing those components.
 
 This configuration is consistent with the lab environment used for the 2023
 NCCoE IoT Onboarding project. This guide provides high-level steps; for more
-specifics, refer to the other [documentation](https://github.com/cablelabs/Streamlined_Onboarding_Demo/tree/master/docs)
-in the Streamlined Onboarding Demo repository.
+specifics, refer to the other [documentation](./) in the Streamlined Onboarding
+Demo repository.
 
 ## Hardware Setup Summary
 
@@ -20,7 +20,8 @@ compatible Wi-Fi adapter (e.g., Atheros AR9271), running at least
 Debian/Raspberry Pi OS 10:
 
 * Access Point (AP): Can be headless (no GUI/Desktop Environment)
-  * See [NetReach documentation]() for instructions on initial configuration.
+  * See [NetReach documentation](./Ref-AP-Setup-for-NCCoE/nccoe-ap-setup.md) for
+    instructions on initial configuration.
 * Client Pis (2):
   * Raspberry Pi OS with Desktop
   * [Adafruit PiTFT](https://www.adafruit.com/product/2423) installed &
@@ -35,15 +36,14 @@ interface, which this guide will assume is referred to as `wlan0`.
 
 ## Component Installation
 
-See the [build documentation](https://github.com/cablelabs/Streamlined_Onboarding_Demo/blob/master/docs/Build.md)
-for a summary of installation paths of each component. This section assumes that
-all binaries, configurations, and templates have been downloaded from the
-release page.
+See the [build documentation](./Build.md) for a summary of installation paths of
+each component. This section assumes that all binaries, configurations, and
+templates have been downloaded from the release page.
 
 ### Access Point
 
 For installation of Wi-Fi components of the AP Pi, refer to the [NetReach
-documentation]().
+documentation](./Ref-AP-Setup-for-NCCoE/nccoe-ap-setup.md).
 
 The following steps should be taken to install the streamlined onboarding
 components on the AP Pi:
@@ -155,7 +155,7 @@ for more detail on manually starting each component of the demo.
 Use the following steps to start the components on the AP:
 
 1. Start the Wi-Fi & network components
-   * Refer to the [NetReach documentation]()
+   * Refer to the [NetReach documentation](./Ref-AP-Setup-for-NCCoE/nccoe-ap-setup.md)
      for details on how to start (or restart) the Wi-Fi and other network
      components.
 2. Start (or restart) the Diplomat:
@@ -278,10 +278,10 @@ network onboarding, described in the next section.
 
 ### Initiate Network Onboarding
 
-See the [NetReach documentation]() for more details on creating & provisioning
-network credentials to devices. This section assumes that all initial
-provisioning of the access point through the NetReach controller is complete at
-this point.
+This section assumes that all initial provisioning of the access point through
+the NetReach controller is complete at this point. See the [NetReach
+documentation](./Ref-AP-Setup-for-NCCoE/nccoe-ap-setup.md) for details on
+initial provisioning of the AP's network.
 
 To begin network onboarding & subsequent application-level onboarding through
 streamlined onboarding, use the following steps:
@@ -383,8 +383,8 @@ following:
 
 ### Resetting Demo Components
 
-Refer to the [NetReach documentation]() for details on how to reset/restart the
-AP Wi-Fi/network components.
+Refer to the [NetReach documentation](./Ref-AP-Setup-for-NCCoE/nccoe-ap-setup.md)
+for details on how to reset/restart the AP Wi-Fi/network components.
 
 To reset the other components of the demo, the following steps should be used:
 
