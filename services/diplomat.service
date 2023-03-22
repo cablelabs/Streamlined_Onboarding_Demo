@@ -4,10 +4,10 @@ After=network.target
 
 [Service]
 Type=simple
-WorkingDirectory=/opt/streamlined_onboarding
+WorkingDirectory=/opt/streamlined_onboarding/lib
 Environment=WPA_CTRL_IFACE=/var/run/hostapd/wlan0
 Environment=DHCP_NAMED_PIPE=/var/run/diplomat/leases
-ExecStart=/opt/streamlined_onboarding/dpp_diplomat
+ExecStart=/opt/streamlined_onboarding/bin/dpp_diplomat
 
 [Install]
 WantedBy=multi-user.target

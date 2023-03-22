@@ -8,7 +8,7 @@ Wants=network.target
 [Service]
 Type=simple
 Environment=DAEMON_CONF=/etc/opt/streamlined_onboarding/so_wpa_supplicant.conf
-ExecStart=/opt/streamlined_onboarding/wpa_supplicant -c${DAEMON_CONF} -i%i -d
+ExecStart=/opt/streamlined_onboarding/bin/wpa_supplicant -c${DAEMON_CONF} -i%i -d
 
 [Install]
 Alias=multi-user.target.wants/so_wpa_supplicant@%i.service

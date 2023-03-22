@@ -1,0 +1,5 @@
+The animated gif was created using ImageMagick via:
+
+convert -delay 500 -loop 5 NRC_nccoe_Device_create.*.png NRC_nccoe_Device_create.gif
+
+The delay number is in centiseconds (1/100 of a second)

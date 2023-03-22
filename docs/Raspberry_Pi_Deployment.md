@@ -5,13 +5,13 @@
 This document provides a brief summary of how to deploy the streamlined
 onboarding demo on a set of Raspberry Pis. This guide assumes the use of the
 NetReach AP components (`hostapd`, `dnsmasq` with lease notification script).
-Refer to the [NetReach release documentation](https://github.com/cablelabs/micronets-gw/releases/tag/v1.2.1-nccoe)
+Refer to the [NetReach AP documentation](./Ref-AP-Setup-for-NCCoE/nccoe-ap-setup.md)
 for details on installing those components.
 
 This configuration is consistent with the lab environment used for the 2023
 NCCoE IoT Onboarding project. This guide provides high-level steps; for more
-specifics, refer to the other [documentation](https://github.com/cablelabs/Streamlined_Onboarding_Demo/tree/master/docs)
-in the Streamlined Onboarding Demo repository.
+specifics, refer to the other [documentation](./) in the Streamlined Onboarding
+Demo repository.
 
 ## Hardware Setup Summary
 
@@ -20,7 +20,8 @@ compatible Wi-Fi adapter (e.g., Atheros AR9271), running at least
 Debian/Raspberry Pi OS 10:
 
 * Access Point (AP): Can be headless (no GUI/Desktop Environment)
-  * See [NetReach documentation]() for instructions on initial configuration.
+  * See [NetReach documentation](./Ref-AP-Setup-for-NCCoE/nccoe-ap-setup.md) for
+    instructions on initial configuration.
 * Client Pis (2):
   * Raspberry Pi OS with Desktop
   * [Adafruit PiTFT](https://www.adafruit.com/product/2423) installed &
@@ -35,24 +36,23 @@ interface, which this guide will assume is referred to as `wlan0`.
 
 ## Component Installation
 
-See the [build documentation](https://github.com/cablelabs/Streamlined_Onboarding_Demo/blob/master/docs/Build.md)
-for a summary of installation paths of each component. This section assumes that
-all binaries, configurations, and templates have been downloaded from the
-release page.
+See the [build documentation](./Build.md) for a summary of installation paths of
+each component. This section assumes that all binaries, configurations, and
+templates have been downloaded from the release page.
 
 ### Access Point
 
 For installation of Wi-Fi components of the AP Pi, refer to the [NetReach
-documentation]().
+documentation](./Ref-AP-Setup-for-NCCoE/nccoe-ap-setup.md).
 
 The following steps should be taken to install the streamlined onboarding
 components on the AP Pi:
 
-1. Install the following binaries to `/opt/streamlined_onboarding`:
+1. Install the following binaries to `/opt/streamlined_onboarding/bin`:
    * `onboarding_tool`
    * `dpp_diplomat`
-2. Create the credentials directories for the OBT & Diplomat (also in
-   `/opt/streamlined_onboarding`):
+2. Create the credentials directories for the OBT & Diplomat in
+   `/opt/streamlined_onboarding/lib`:
    * `onboarding_tool_creds`
    * `dpp_diplomat_creds`
 3. Install the `systemd` service for the DPP Diplomat:
@@ -67,8 +67,8 @@ The following snippet performs all of the steps described above (assumes use of
 ```sh
 #!/bin/bash
 export INSTALL_DEST=/opt/streamlined_onboarding
-sudo mkdir -p $INSTALL_DEST/{onboarding_tool,dpp_diplomat}_creds
-sudo install -t $INSTALL_DEST onboarding_tool dpp_diplomat
+sudo mkdir -p $INSTALL_DEST/bin $INSTALL_DEST/lib/{onboarding_tool,dpp_diplomat}_creds
+sudo install -t $INSTALL_DEST/bin onboarding_tool dpp_diplomat
 sudo install -m 644 diplomat.service /etc/systemd/system
 sudo systemctl daemon-reload
 sudo systemctl enable diplomat.service
@@ -85,8 +85,8 @@ components on the client Pis:
 
 1. Install the modified Wi-Fi components to `/opt/streamlined_onboarding` and
    create symlink in `/usr/sbin`:
-   * Install `wpa_supplicant` to `/opt/streamlined_onboarding`
-   * Install `wpa_cli` to `/opt/streamlined_onboarding`
+   * Install `wpa_supplicant` to `/opt/streamlined_onboarding/bin`
+   * Install `wpa_cli` to `/opt/streamlined_onboarding/bin`
    * Stop `dhcpcd` service with `sudo systemctl stop dhcpcd.service`
    * Back up system-installed `/usr/sbin/wpa_supplicant` (to, e.g.,
      `/usr/sbin/wpa_supplicant.orig`)
@@ -95,8 +95,8 @@ components on the client Pis:
    * Create symlink to modified supplicant & components in `/usr/sbin` using the
      following commands:
      ```sh
-     sudo ln -s /opt/streamlined_onboarding/wpa_supplicant /usr/sbin
-     sudo ln -s /opt/streamlined_onboarding/wpa_cli /usr/sbin
+     sudo ln -s /opt/streamlined_onboarding/bin/wpa_supplicant /usr/sbin
+     sudo ln -s /opt/streamlined_onboarding/bin/wpa_cli /usr/sbin
      ```
    * Restart `dhcpcd` with `sudo systemctl restart dhcpcd.service`
 2. Install modified Wi-Fi libraries leveraged by client applications:
@@ -119,7 +119,7 @@ that all necessary files are located in the current working directory:
 ```sh
 #!/bin/bash
 export INSTALL_DEST=/opt/streamlined_onboarding CONFIG_DEST=/etc/opt/streamlined_onboarding
-sudo mkdir -p $INSTALL_DEST $CONFIG_DEST
+sudo mkdir -p $INSTALL_DEST/bin $CONFIG_DEST
 mkdir -p $HOME/.config/autostart
 
  # Wi-Fi components
@@ -155,7 +155,7 @@ for more detail on manually starting each component of the demo.
 Use the following steps to start the components on the AP:
 
 1. Start the Wi-Fi & network components
-   * Refer to the [NetReach documentation]()
+   * Refer to the [NetReach documentation](./Ref-AP-Setup-for-NCCoE/nccoe-ap-setup.md)
      for details on how to start (or restart) the Wi-Fi and other network
      components.
 2. Start (or restart) the Diplomat:
@@ -163,7 +163,7 @@ Use the following steps to start the components on the AP:
      diplomat.service`
 3. Start the onboarding tool
    * Start the OBT by executing the `onboarding_tool` binary from within the
-     `/opt/streamlined_onboarding` directory.
+     `/opt/streamlined_onboarding/lib` directory.
    * The main OBT menu should be displayed and prompt for you to select an
      option.
 
@@ -278,10 +278,10 @@ network onboarding, described in the next section.
 
 ### Initiate Network Onboarding
 
-See the [NetReach documentation]() for more details on creating & provisioning
-network credentials to devices. This section assumes that all initial
-provisioning of the access point through the NetReach controller is complete at
-this point.
+This section assumes that all initial provisioning of the access point through
+the NetReach controller is complete at this point. See the [NetReach
+documentation](./Ref-AP-Setup-for-NCCoE/nccoe-ap-setup.md) for details on
+initial provisioning of the AP's network.
 
 To begin network onboarding & subsequent application-level onboarding through
 streamlined onboarding, use the following steps:
@@ -289,7 +289,8 @@ streamlined onboarding, use the following steps:
 1. Select "create" at the top of the "Devices" tab of the NetReach controller
    (shown below).
 
-![NetReach controller devices page](./images/NRC_nccoe_Devices_overview.png)
+![NetReach controller devices page](./Ref-AP-Setup-for-NCCoE/diagrams/NRC_nccoe_Devices_overview.png)
+
 
 2. Enter the device information into the create device form:
    * Device name
@@ -302,7 +303,7 @@ streamlined onboarding, use the following steps:
    The gif below summarizes each of the fields to populate in the device
    creation form:
 
-   ![](./images/NRC_nccoe_Device_create.gif)
+   ![](./Ref-AP-Setup-for-NCCoE/diagrams/NRC_nccoe_Device_create.gif)
 
 4. Submit the form by clicking "create new device".
 
@@ -310,7 +311,7 @@ Once the device has been created, the device details page for the device should
 be displayed, an example of which appears below:
 
 ![Example device after being added through the NetReach controller's
-interface](./images/NRC_nccoe_Device_details.png)
+interface](./Ref-AP-Setup-for-NCCoE/diagrams/NRC_nccoe_Device_details.png)
 
 #### Confirming Onboarding
 
@@ -382,8 +383,8 @@ following:
 
 ### Resetting Demo Components
 
-Refer to the [NetReach documentation]() for details on how to reset/restart the
-AP Wi-Fi/network components.
+Refer to the [NetReach documentation](./Ref-AP-Setup-for-NCCoE/nccoe-ap-setup.md)
+for details on how to reset/restart the AP Wi-Fi/network components.
 
 To reset the other components of the demo, the following steps should be used:
 
@@ -395,7 +396,7 @@ To reset the other components of the demo, the following steps should be used:
 2. Remove contents of all credentials directories to reset provisioning steps:
    ```sh
    #!/bin/bash
-   sudo rm /opt/streamlined_onboarding/{onboarding_tool,dpp_diplomat}_creds/*
+   sudo rm /opt/streamlined_onboarding/lib/{onboarding_tool,dpp_diplomat}_creds/*
    sudo rm /var/opt/streamlined_onboarding/{lightswitch,lamp}_creds/*
    ```
 3. Restart `dhcpcd` via `sudo systemctl restart dhcpcd.service`
