@@ -289,7 +289,8 @@ streamlined onboarding, use the following steps:
 1. Select "create" at the top of the "Devices" tab of the NetReach controller
    (shown below).
 
-![NetReach controller devices page](./images/NRC_nccoe_Devices_overview.png)
+![NetReach controller devices page](./Ref-AP-Setup-for-NCCoE/diagrams/NRC_nccoe_Devices_overview.png)
+
 
 2. Enter the device information into the create device form:
    * Device name
@@ -302,7 +303,7 @@ streamlined onboarding, use the following steps:
    The gif below summarizes each of the fields to populate in the device
    creation form:
 
-   ![](./images/NRC_nccoe_Device_create.gif)
+   ![](./Ref-AP-Setup-for-NCCoE/diagrams/NRC_nccoe_Device_create.gif)
 
 4. Submit the form by clicking "create new device".
 
@@ -310,7 +311,7 @@ Once the device has been created, the device details page for the device should
 be displayed, an example of which appears below:
 
 ![Example device after being added through the NetReach controller's
-interface](./images/NRC_nccoe_Device_details.png)
+interface](./Ref-AP-Setup-for-NCCoE/diagrams/NRC_nccoe_Device_details.png)
 
 #### Confirming Onboarding
 
