@@ -30,7 +30,7 @@
 
 This section provides a cursory overview of what's required to build, configure,
 and run the demo from scratch. This demo assumes the use of the lightswitch
-device running on a Raspberry Pi, and interacting with it via the web-based OBT.
+device running on a Raspberry Pi, and interacting with it via the OBT.
 
 This involves the following high-level steps:
 
@@ -41,7 +41,7 @@ This involves the following high-level steps:
 * Building the IoTivity-Lite components
   * OBT
   * Diplomat
-  * Lightswitch
+  * Client device(s) (light switch/lamp)
 
 Not all of these steps are described in full detail, as components of this demo
 are still fragmented and spread across multiple repositories.
@@ -244,7 +244,7 @@ corresponds to a device in the architecture.
 
 | Component                | Installation Path                                       | Description                                                                                                 |
 |--------------------------|---------------------------------------------------------|-------------------------------------------------------------------------------------------------------------|
-| Onboarding Tool          | `/opt/streamlined_onboarding/bin/onboarding_tool`       |                                                                                                             |
+| Onboarding Tool          | `/opt/streamlined_onboarding/bin/onboarding_tool`       | Note that the OBT can also be installed on a separate device (e.g., when VLANs are in use).                 |
 | OBT credentials          | `/opt/streamlined_onboarding/lib/onboarding_tool_creds` | Should exist if onboarding actions should persist across invocations (recommended).                         |
 | DPP Diplomat             | `/opt/streamlined_onboarding/bin/dpp_diplomat`          |                                                                                                             |
 | DPP Diplomat credentials | `/opt/streamlined_onboarding/lib/dpp_diplomat_creds`    | Should exist if onboarding actions should persist across invocations (recommended).                         |
