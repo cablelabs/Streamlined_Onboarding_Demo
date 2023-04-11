@@ -15,13 +15,16 @@ Demo repository.
 
 ## Hardware Setup Summary
 
-This demo's hardware configuration consists of 3 Raspberry Pis, each with a
+This demo's hardware configuration consists of 4 Raspberry Pis, each with a
 compatible Wi-Fi adapter (e.g., Atheros AR9271), running at least
 Debian/Raspberry Pi OS 10:
 
 * Access Point (AP): Can be headless (no GUI/Desktop Environment)
   * See [NetReach documentation](./Ref-AP-Setup-for-NCCoE/nccoe-ap-setup.md) for
     instructions on initial configuration.
+* OBT Pi: Headless
+  * Run on separate device due to VLAN requirement [caveat](../README.md#obt-and-vlans)
+  * Assumed to be onboarded to the network ahead of demo execution.
 * Client Pis (2):
   * Raspberry Pi OS with Desktop
   * [Adafruit PiTFT](https://www.adafruit.com/product/2423) installed &
@@ -38,7 +41,14 @@ interface, which this guide will assume is referred to as `wlan0`.
 
 See the [build documentation](./Build.md) for a summary of installation paths of
 each component. This section assumes that all binaries, configurations, and
-templates have been downloaded from the release page.
+templates have been downloaded from the release page or the CableLabs
+Artifactory (via the commands below):
+
+```sh
+curl -L -O "https://artifactory.cablelabs.com/artifactory/micronets-nccoe/packages/dpp-diplomat/dpp_diplomat"
+curl -L -O "https://artifactory.cablelabs.com/artifactory/micronets-nccoe/packages/dpp-diplomat/onboarding_tool"
+curl -L -O "https://artifactory.cablelabs.com/artifactory/micronets-nccoe/packages/dpp-diplomat/diplomat.service"
+```
 
 ### Access Point
 
@@ -49,11 +59,9 @@ The following steps should be taken to install the streamlined onboarding
 components on the AP Pi:
 
 1. Install the following binaries to `/opt/streamlined_onboarding/bin`:
-   * `onboarding_tool`
    * `dpp_diplomat`
-2. Create the credentials directories for the OBT & Diplomat in
+2. Create the credentials directory for the Diplomat in
    `/opt/streamlined_onboarding/lib`:
-   * `onboarding_tool_creds`
    * `dpp_diplomat_creds`
 3. Install the `systemd` service for the DPP Diplomat:
    * Install `diplomat.service` to `/etc/systemd/system`
@@ -67,11 +75,31 @@ The following snippet performs all of the steps described above (assumes use of
 ```sh
 #!/bin/bash
 export INSTALL_DEST=/opt/streamlined_onboarding
-sudo mkdir -p $INSTALL_DEST/bin $INSTALL_DEST/lib/{onboarding_tool,dpp_diplomat}_creds
-sudo install -t $INSTALL_DEST/bin onboarding_tool dpp_diplomat
+sudo mkdir -p $INSTALL_DEST/bin $INSTALL_DEST/lib/dpp_diplomat_creds
+sudo install -t $INSTALL_DEST/bin dpp_diplomat
 sudo install -m 644 diplomat.service /etc/systemd/system
 sudo systemctl daemon-reload
 sudo systemctl enable diplomat.service
+unset -v INSTALL_DEST
+```
+
+### OBT Pi
+
+1. Install the modified Wi-Fi components in the same fashion described for the
+   client Pis [below](#client-pis).
+2. Install the following binaries to `/opt/streamlined_onboarding/bin`:
+   * `onboarding_tool`
+3. Create the credentials directory for the OBT in
+   `/opt/streamlined_onboarding/lib`:
+   * `onboarding_tool_creds`
+
+The following snippet performs the steps described above:
+
+```sh
+#!/bin/bash
+export INSTALL_DEST=/opt/streamlined_onboarding
+sudo mkdir -p $INSTALL_DEST/bin $INSTALL_DEST/lib/onboarding_tool_creds
+sudo install -t $INSTALL_DEST/bin onboarding_tool
 unset -v INSTALL_DEST
 ```
 
@@ -161,7 +189,12 @@ Use the following steps to start the components on the AP:
 2. Start (or restart) the Diplomat:
    * Restart the DPP Diplomat service with `sudo systemctl restart
      diplomat.service`
-3. Start the onboarding tool
+
+### OBT Pi
+
+Use the following steps to start the components on the OBT Pi:
+
+1. Start the onboarding tool
    * Start the OBT by executing the `onboarding_tool` binary from within the
      `/opt/streamlined_onboarding/lib` directory.
    * The main OBT menu should be displayed and prompt for you to select an
@@ -209,8 +242,9 @@ ensure that they are stopped/killed before restarting.
 
 A final one-time step that is required is using the OBT to onboard & provision
 the Diplomat. See the [running documentation](https://github.com/cablelabs/Streamlined_Onboarding_Demo/blob/master/docs/Running.md#initial-provisioning-of-diplomat)
-for more details. The following steps can be executed using the OBT to perform
-initial provisioning of the DPP Diplomat:
+for more details. It is assumed that the OBT Pi has been associated to the
+network before this provisioning step takes place. The following steps can be
+executed using the OBT to perform initial provisioning of the DPP Diplomat:
 
 1. Discover unowned devices (option `1`)
 2. Onboard with Just Works (option `8`)
@@ -235,6 +269,10 @@ Sent OBSERVE request
 Observe Diplomat:
 
 ```
+
+Note that only one observe operation (option `41`) needs to be executed from the
+OBT. Once subscribed via the initial observe, the Diplomat will send subsequent
+streamlined onboarding information notifications to the OBT as it receives them.
 
 ## Executing The Demo
 
@@ -373,6 +411,11 @@ operations. The following steps can be used to achieve this:
 
 ## Troubleshooting
 
+* It is recommended that the steps above be executed **in their entirety** for
+  **one client device at a time.**
+
+### Logs
+
 Some useful logs/areas to observe during the execution of the demo include the
 following:
 
@@ -381,24 +424,47 @@ following:
   * `sudo journalctl -u diplomat.service -f` if using `systemd` service
 * The main `micronets-gw` log: `/opt/micronets-gw/micronets-gw.log`
 
+### Diplomat and DHCP Notification Named Pipe
+
+* The current implementation of the DPP Diplomat blocks when reading from the
+  DHCP notification named pipe, and does not perform any validation of the
+  information that is provided by the DHCP service (`dnsmasq`) to the named
+  pipe. This can cause some potential complications:
+  * If the notification named pipe fails to be created or cannot be written to,
+    then the diplomat will never receive information and indefinitely block.
+  * If the notification named pipe was created as a plaintext file (e.g., if
+    `dnsmasq` wrote to it before the Diplomat created it), then the Diplomat may
+    always have data to read from the pipe and may provide a notification to the
+    OBT too early (before the client device has been assigned an IP address).
+  * If the demo has been executed several times in a row without the Diplomat,
+    or if other non-OCF devices have been assigned an IP address, the named pipe
+    may have "extra" data in it that the Diplomat will read and thus notify the
+    OBT too early.
+
 ### Resetting Demo Components
 
-Refer to the [NetReach documentation](./Ref-AP-Setup-for-NCCoE/nccoe-ap-setup.md)
-for details on how to reset/restart the AP Wi-Fi/network components.
-
-To reset the other components of the demo, the following steps should be used:
-
-1. Stop all OCF-related binaries on AP & client devices:
+1. Delete devices from the NetReach controller using the admin portal.
+2. Stop all OCF-related binaries on all devices:
    * `onboarding_tool` (exit gracefully with option `99`)
    * `dpp_diplomat` (stop service with `sudo systemctl stop diplomat.service`)
    * Python client applications: kill main Python process (e.g., `python -m
      slined_onboarding.(lamp|lightswitch)`
-2. Remove contents of all credentials directories to reset provisioning steps:
+3. Remove contents of all credentials directories to reset provisioning steps:
    ```sh
    #!/bin/bash
    sudo rm /opt/streamlined_onboarding/lib/{onboarding_tool,dpp_diplomat}_creds/*
    sudo rm /var/opt/streamlined_onboarding/{lightswitch,lamp}_creds/*
    ```
-3. Restart `dhcpcd` via `sudo systemctl restart dhcpcd.service`
-4. Restart the OCF components stopped in step 1 (see instructions
+   * Note that the client devices are configured to not persist their
+     credentials by default (see `prod.env`)
+   * Note that the OBT & Diplomat credentials only need to be removed if the
+     inital provisioning of the Diplomat needs to be repeated
+3. Verify that the contents of `/etc/wpa_supplicant/wpa_supplicant.conf` do not
+   have any unnecessary `network` blocks.
+4. On the AP Pi, restart the `micronets-hostapd` and `micronets-gw` services.
+5. On client & OBT Pis, restart `dhcpcd` via `sudo systemctl restart
+   dhcpcd.service`
+6. Remove the DHCP notification named pipe from the AP using `sudo rm
+   /var/run/diplomat/leases`
+7. Restart the OCF components stopped in step 1 (see instructions
    [above](#starting-components)).
