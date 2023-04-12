@@ -87,6 +87,7 @@ These devices can be thought of in the following way:
 * The access point (AP):
   * Hosts the Wi-Fi network
   * Hosts the Onboarding Tool (root of the OCF domain)
+    * **See OBT & VLAN caveat [below](#obt-and-vlans)**
   * Hosts the Diplomat component that facilitates communications between the
     Wi-Fi and OCF layers
 * The client device(s) (client, OCF Device, station, STA):
@@ -160,3 +161,15 @@ can be "mocked" through special environment variables, so that the interface can
 be run on a regular Linux desktop environment without GPIO. See the
 [`dotenv_template`](/ocf_devices/lightswitch/dotenv_template) file for more
 information.
+
+### OBT and VLANs
+
+The OBT relies on multicast IPv6 traffic for discovery of OCF devices. When the
+OBT is executed on the AP and VLANs are in use (as is the case when using the
+NetReach AP), ensure that multicast traffic originating from the OBT is
+reflected to all VLANs to ensure discovery of client devices.
+
+Alternatively, the OBT can be run on a separate device on the same VLAN as
+client devices to be onboarded. The OBT can be considered logically separate and
+need not be tightly coupled to any particular device in this demo's
+architecture, so long as it can reach the DPP Diplomat and client devices.

@@ -125,22 +125,23 @@ Here are the instructions for installing the OCF DPP Diplomat:
 
 ```
 curl -L -O "https://artifactory.cablelabs.com/artifactory/micronets-nccoe/packages/dpp-diplomat/dpp_diplomat"
-curl -L -O "https://artifactory.cablelabs.com/artifactory/micronets-nccoe/packages/dpp-diplomat/onboarding_tool"
 curl -L -O "https://artifactory.cablelabs.com/artifactory/micronets-nccoe/packages/dpp-diplomat/diplomat.service"
 ```
 
-2) Install the streamlined onboarding tools:
+2) Install the streamlined onboarding DPP Diplomat:
 
-Run the following steps to install the OCF/DPP streamlined onboarding components:
+Run the following steps to install the OCF/DPP streamlined onboarding diplomat:
 
-```
+```sh
 export INSTALL_DEST=/opt/streamlined_onboarding
-sudo mkdir -p $INSTALL_DEST/bin $INSTALL_DEST/lib/{onboarding_tool,dpp_diplomat}_creds
-sudo install -t $INSTALL_DEST/bin onboarding_tool dpp_diplomat
+sudo mkdir -p $INSTALL_DEST/bin $INSTALL_DEST/lib/dpp_diplomat_creds
+sudo install -t $INSTALL_DEST/bin dpp_diplomat
 sudo install -m 644 diplomat.service /etc/systemd/system
 sudo systemctl daemon-reload
+sudo systemctl enable diplomat.service
 unset -v INSTALL_DEST
 ```
+
 
 The steps for starting the OCF/DPP streamlined onboarding diplomat service are described below, after the AP is provisioned and configured.
 

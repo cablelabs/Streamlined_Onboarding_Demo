@@ -4,6 +4,10 @@
 
 * At least two independent hardware instances are required, one acting as the
   AP, one acting as the STA
+  * It is preferable that the OBT be run on the same network segment/VLAN as
+    client devices to be onboarded; in this case, it is recommended that a third
+    device be used to host the OBT.
+    * This is the case when using the NetReach access point.
 * Wi-Fi adapters are required - code can be built, but will not fully run, on a
   virtual machine without a Wi-Fi adapter provided via USB passthrough
 * The client Devices defined in this repository are meant to be run on Raspberry
@@ -46,6 +50,9 @@
   point, available [here](https://github.com/cablelabs/micronets-gw/releases/tag/v1.2.1-nccoe)
   * If leveraging this version, disregard instructions in this documentation on
     the configuration of the AP.
+  * Additionally, it is preferred that the OCF OBT be run on a separate device
+    that will be onboarded into the same VLAN as any client devices that are to
+    be onboarded.
 * For the AP, additional configuration and installation of other network
   components may be necessary in addition to the modified version of `hostapd`
 * The Wi-Fi adapter that will broadcast the Wi-Fi network should be configured
